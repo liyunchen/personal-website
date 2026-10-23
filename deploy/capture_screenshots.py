@@ -62,10 +62,13 @@ def main():
         # 项目页：展开一个 STAR 详情
         page.click(".nav-link >> text=项目")
         page.wait_for_timeout(800)
-        star = page.locator("[class*='star-toggle'], [class*='star'] button").first
+        star = page.get_by_role("button", name="查看 STAR 详情").first
         if star.count() > 0:
             star.click()
-            page.wait_for_timeout(700)
+            page.wait_for_timeout(800)
+            page.evaluate(
+                "document.querySelector('.star-list')?.scrollIntoView({block:'center'})")
+            page.wait_for_timeout(600)
             shot(page, "03b-project-star")
         else:
             print("  [--] 未找到 STAR 展开按钮，跳过")
