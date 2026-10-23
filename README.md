@@ -5,10 +5,86 @@
 
 一个可直接复用的「在线简历 + 作品集」全栈方案：所有内容都能通过后台自助维护，**不需要改代码、不需要重新部署**。
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Tech](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=20232a)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)](https://vite.dev/)
+[![Python](https://img.shields.io/badge/Python-3.x-3776ab?logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/后端依赖-0-green)](deploy/server/app.py)
+
+## 在线预览
+
+**线上地址**：<https://www.chenlove.cn>
+
+> 本仓库其他位置已做脱敏（服务器 IP、部署路径、真实域名均为占位值），
+> 仅此处保留演示站地址以便查看实际效果。若 fork 此项目，请替换为你自己的地址。
+
+---
+
+## 界面演示
+
+### 首页 · 个人简介与联系方式
+
+![首页](docs/screenshots/01-home.png)
+
+### 经历 · 工作与教育时间线
+
+![经历](docs/screenshots/02-experience.png)
+
+### 项目 · STAR 法则结构化呈现
+
+![项目](docs/screenshots/03-projects.png)
+
+展开某个项目的 STAR 详情：
+
+![STAR 详情](docs/screenshots/03b-project-star.png)
+
+### AI 技能 · 能力矩阵
+
+![AI 技能](docs/screenshots/04-ai-skills.png)
+
+### 荣誉墙
+
+![荣誉墙](docs/screenshots/05-honors.png)
+
+### 博客 · 列表与详情
+
+![博客列表](docs/screenshots/06-blog.png)
+
+详情页带阅读进度条、悬浮目录（滚动高亮）与相关文章推荐：
+
+![博客详情](docs/screenshots/07-blog-detail.png)
+
+### 内容管理后台
+
+登录：
+
+![后台登录](docs/screenshots/08-admin-login.png)
+
+11 个分区自助编辑，改完 1.2 秒自动保存：
+
+![后台基本信息](docs/screenshots/09-admin-profile.png)
+
+![后台工作经历](docs/screenshots/10-admin-experience.png)
+
+![后台博客文章](docs/screenshots/11-admin-posts.png)
+
+### 移动端
+
+响应式适配，360px 起可用：
+
+![移动端](docs/screenshots/12-mobile-home.png)
+
+---
+
+> 截图由 `deploy/capture_screenshots.py` 自动采集，重新部署后可用它一键更新。
+> 命令：`SITE_BASE=<地址> ADMIN_PASS=<密码> python deploy/capture_screenshots.py`
+
 ---
 
 ## 目录
 
+- [界面演示](#界面演示)
 - [功能特性](#功能特性)
 - [技术栈](#技术栈)
 - [项目结构](#项目结构)
@@ -112,17 +188,20 @@
 │   ├── server/
 │   │   ├── app.py                # 后端服务（零依赖）
 │   │   ├── e2e_test.py           # API 端到端测试
-│   │   ├── example.com.conf  # Nginx 站点配置模板
-│   │   ├── portfolio-api.service # systemd unit
-│   │   └── nginx-http-only.conf      # 仅 HTTP 配置（申请证书前的临时态）
+│   │   ├── nginx-site.conf       # Nginx 站点配置模板
+│   │   ├── nginx-http-only.conf  # 仅 HTTP 配置（申请证书前的临时态）
+│   │   └── portfolio-api.service # systemd unit
 │   ├── ssh_helper.py             # SSH 工具（info / run / put）
 │   ├── upload_dist.py            # 递归上传 dist
 │   ├── ui_test.py                # 浏览器端到端测试（Playwright）
-│   ├── verify_online.py          # 线上视觉验收 + 截图
+│   ├── verify_online.py          # 线上视觉验收
+│   ├── capture_screenshots.py    # 采集 README 演示截图
 │   └── debug_sort.py             # 排序行为聚焦调试
 │
+├── docs/screenshots/             # README 演示截图（由 capture_screenshots.py 生成）
 ├── prototype.html                # 设计原型（视觉基准）
 ├── demo-a/b/c.html               # 三套设计方案对比稿
+├── LICENSE
 └── README.md
 ```
 
@@ -481,6 +560,10 @@ POST /api/upload          上传图片（需 token）
 ---
 
 ## 开源说明
+
+### 许可证
+
+[MIT](LICENSE) —— 可自由用于个人、商业或二次分发。
 
 ### 示例内容与真实内容
 
