@@ -57,7 +57,11 @@
 
 ### 内容管理后台
 
-登录：
+> **入口不对外暴露**：前台页面没有任何指向后台的链接或按钮，需直接访问 `<站点地址>/#/admin`。
+> 这是有意设计 —— 避免后台地址被搜索引擎或爬虫收录。
+> 如需修改前台入口位置，搜索 `App.tsx` 中的 `footer` 与 `navigate('admin')`。
+
+登录页：
 
 ![后台登录](docs/screenshots/08-admin-login.png)
 
@@ -249,6 +253,7 @@ npm install
 | `DEPLOY_PORT` | SSH 端口，默认 22 |
 | `DEPLOY_USER` | SSH 用户，默认 root |
 | `DEPLOY_PASS` | SSH 密码 |
+| `REMOTE_DIST` | 远端 dist 目录，**upload_dist.py 必填**，不设会直接报错退出 |
 
 ### 测试脚本
 
@@ -320,7 +325,7 @@ python ssh_helper.py put server/portfolio-api.service /etc/systemd/system/portfo
 python ssh_helper.py put server/example.com.conf  /www/server/panel/vhost/nginx/example.com.conf
 
 cd ../portfolio && npm run build && cd ../deploy
-python upload_dist.py     # 递归上传 dist（自动重建远端目录）
+REMOTE_DIST=$SITE/dist python upload_dist.py   # 递归上传 dist（自动重建远端目录）
 ```
 
 > **Git Bash 注意**：SFTP 目标路径需 `export MSYS_NO_PATHCONV=1`，否则 `/xxx` 会被改写成 Windows 本地路径。
@@ -478,7 +483,9 @@ python deploy/ssh_helper.py run "tail -50 /www/wwwlogs/<域名>.error.log"
 
 ```bash
 cd portfolio && npm run build
-cd ../deploy && export DEPLOY_PASS='<服务器密码>' && python upload_dist.py
+cd ../deploy
+export DEPLOY_PASS='<服务器密码>'
+REMOTE_DIST=$SITE/dist python upload_dist.py
 ```
 
 改了 `app.py` 需额外：
@@ -522,6 +529,16 @@ value: '138-XXXX-XXXX'                  → 你的手机号
 // 基本信息
 profile.name / headline / roles / intro  → 你的个人信息
 ```
+
+### 后台入口
+
+后台入口默认不暴露，需直接访问 `#/admin`。若想在前台加回入口（如个人私有部署），在 `App.tsx` 的 `<footer>` 里加：
+
+```tsx
+<button onClick={() => navigate('admin')}>管理后台</button>
+```
+
+同时把 `globals.css` 中被注释掉的 `.footer-admin` 样式恢复。
 
 ### 加一个新分区
 

@@ -8,8 +8,13 @@ import posixpath
 import ssh_helper as H
 
 LOCAL_DIST = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "portfolio", "dist")
-REMOTE_DIST = os.environ.get(
-    "REMOTE_DIST", "/www/wwwroot/your-project/dist")
+# 远端目录必须通过 REMOTE_DIST 显式指定；脱敏默认值是占位符，直接用它会传错位置
+REMOTE_DIST = os.environ.get("REMOTE_DIST", "")
+if not REMOTE_DIST:
+    raise SystemExit(
+        "环境变量 REMOTE_DIST 未设置。\n"
+        "示例：REMOTE_DIST=/www/wwwroot/your-project/dist python upload_dist.py"
+    )
 
 
 def walk(local_dir, remote_dir, client, results):

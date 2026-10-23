@@ -106,9 +106,6 @@ export default function App() {
 
       <footer className="site-footer">
         <span>© {new Date().getFullYear()} {content.profile.name}</span>
-        <button className="footer-admin" onClick={() => navigate('admin')}>
-          管理后台
-        </button>
       </footer>
     </div>
   )
