@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>方案 B — Elevated 光影层次</title>
+<style>
+:root{
+  --n-50:oklch(98.5% 0.003 250);--n-100:oklch(96% 0.005 250);--n-200:oklch(91% 0.007 250);
+  --n-300:oklch(83% 0.009 250);--n-500:oklch(53% 0.010 250);--n-700:oklch(35% 0.010 250);--n-900:oklch(16% 0.010 250);
+  --a-100:oklch(94% 0.06 240);--a-200:oklch(88% 0.09 240);--a-400:oklch(64% 0.16 240);--a-500:oklch(52% 0.18 240);
+  --green:oklch(53% 0.16 152);--green-lt:oklch(95% 0.06 152);
+  --purple:oklch(58% 0.17 300);--amber:oklch(62% 0.17 82);--amber-lt:oklch(96% 0.07 82);
+  --bg:var(--n-50);--surface:oklch(100% 0 0);--raised:var(--n-100);--border:var(--n-200);
+  --text:var(--n-900);--muted:var(--n-500);--accent:var(--a-500);--accent-lt:var(--a-100);
+  --sh-sm:0 1px 4px oklch(16% .01 250/.08),0 2px 6px oklch(16% .01 250/.05);
+  --sh-md:0 4px 14px oklch(16% .01 250/.10),0 2px 4px oklch(16% .01 250/.06);
+  --font:'PingFang SC','Microsoft YaHei',sans-serif;--mono:'JetBrains Mono','Fira Code',monospace;
+  --r:6px;--r-md:10px;--r-lg:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.75}
+
+/* ── B方案：导航彩色渐变底线 ── */
+.nav{
+  background:oklch(100% 0 0/.96);backdrop-filter:blur(20px);
+  height:52px;display:flex;align-items:center;padding:0 32px;justify-content:space-between;
+  position:relative;
+}
+/* 渐变底线替换纯色border */
+.nav::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--a-400),var(--purple),var(--a-400),transparent);
+  opacity:.4;
+}
+.nav-logo{font-weight:800;font-size:17px;color:var(--text)}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:2px}
+.nav-link{padding:5px 13px;border-radius:var(--r);font-size:14px;color:var(--muted);cursor:pointer;
+  font-weight:500;border:none;background:transparent;font-family:var(--font);
+  transition:color .14s,background .14s}
+.nav-link:hover{color:var(--text);background:var(--raised)}
+.nav-link.active{color:var(--accent);background:var(--accent-lt)}
+
+.demo-body{max-width:960px;margin:0 auto;padding:40px 24px}
+.label{display:inline-block;background:var(--accent-lt);color:var(--accent);font-size:11px;
+  font-weight:700;padding:4px 12px;border-radius:999px;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
+h2{font-size:22px;font-weight:800;margin-bottom:8px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:32px}
+
+/* ── B方案：卡片按颜色类型 glow 发光 ── */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:22px;box-shadow:var(--sh-sm);cursor:pointer;
+  transition:border-color .2s,box-shadow .25s,transform .2s}
+.card-a:hover{border-color:oklch(64% .16 240);box-shadow:var(--sh-md),0 0 0 3px oklch(94% .06 240),0 8px 24px oklch(52% .18 240/.15);transform:translateY(-3px)}
+.card-b:hover{border-color:oklch(70% .14 152);box-shadow:var(--sh-md),0 0 0 3px oklch(95% .06 152),0 8px 24px oklch(53% .16 152/.15);transform:translateY(-3px)}
+.card-c:hover{border-color:oklch(70% .14 300);box-shadow:var(--sh-md),0 0 0 3px oklch(95% .05 300),0 8px 24px oklch(58% .17 300/.15);transform:translateY(-3px)}
+.card-title{font-weight:700;font-size:15px;margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--muted);line-height:1.7}
+
+/* ── B方案：primary 按钮 shimmer 流光扫过 ── */
+.btns{display:flex;gap:12px;margin-bottom:40px}
+.btn{padding:10px 22px;border-radius:var(--r-md);font-size:14px;font-weight:600;cursor:pointer;
+  border:none;font-family:var(--font);transition:all .18s}
+.btn-primary{
+  background:linear-gradient(135deg,var(--a-500),var(--purple));color:#fff;
+  box-shadow:0 2px 10px oklch(52% .18 240/.30);position:relative;overflow:hidden;
+}
+/* shimmer 伪元素 */
+.btn-primary::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(105deg,transparent,oklch(100% 0 0/.25),transparent);
+  transition:left .5s ease;pointer-events:none;
+}
+.btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px);
+  box-shadow:0 4px 18px oklch(52% .18 240/.40)}
+.btn-primary:hover::after{left:150%}
+.btn-primary:active{transform:translateY(1px);box-shadow:0 1px 6px oklch(52% .18 240/.20)}
+.btn-outline{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
+.btn-outline:active{transform:translateY(1px)}
+
+/* ── B方案：chips 多彩配色 ── */
+.chips{display:flex;gap:8px;margin-bottom:40px;flex-wrap:wrap}
+.chip{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;
+  cursor:pointer;transition:box-shadow .18s,transform .15s}
+.chip-a{background:var(--accent-lt);color:var(--accent);border:1px solid oklch(88% .09 240)}
+.chip-b{background:var(--green-lt);color:var(--green);border:1px solid oklch(82% .1 152)}
+.chip-c{background:oklch(95% .05 300);color:oklch(58% .17 300);border:1px solid oklch(85% .08 300)}
+.chip-d{background:var(--amber-lt);color:var(--amber);border:1px solid oklch(85% .1 82)}
+.chip:hover{transform:translateY(-2px);box-shadow:0 4px 12px oklch(52% .18 240/.18)}
+
+/* ── B方案：数字条滚动计数动画 ── */
+.stats{display:flex;border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;background:var(--surface);box-shadow:var(--sh-sm);margin-bottom:40px}
+.stat{flex:1;padding:22px 16px;text-align:center;border-right:1px solid var(--border);
+  position:relative;overflow:hidden}
+.stat:last-child{border-right:none}
+/* 底部色块装饰 */
+.stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--a-500),var(--purple))}
+.stat-a::after{background:var(--a-500)}
+.stat-b::after{background:var(--green)}
+.stat-c::after{background:var(--purple)}
+.stat-d::after{background:var(--amber)}
+.stat-num{font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--a-500),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.stat-label{font-size:12px;color:var(--muted);margin-top:5px}
+
+/* ── B方案：section eyebrow 点缀 ── */
+.eyebrow{font-size:12px;font-weight:700;color:var(--accent);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;
+  display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:'';width:16px;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:1px;flex-shrink:0}
+
+/* ── B方案：页面切换淡入上移 ── */
+@keyframes pageEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.demo-body>*{animation:pageEnter .35s ease both}
+.demo-body>*:nth-child(2){animation-delay:.04s}
+.demo-body>*:nth-child(3){animation-delay:.08s}
+.demo-body>*:nth-child(4){animation-delay:.12s}
+.demo-body>*:nth-child(5){animation-delay:.16s}
+.demo-body>*:nth-child(6){animation-delay:.20s}
+
+.note{background:var(--raised);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:16px 20px;font-size:13px;color:var(--muted);line-height:1.7}
+.note strong{color:var(--text)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">LI<span>.</span>YC</div>
+  <div class="nav-links">
+    <button class="nav-link active">首页</button>
+    <button class="nav-link">经历</button>
+    <button class="nav-link">项目</button>
+    <button class="nav-link">AI 技能</button>
+    <button class="nav-link">荣誉墙</button>
+    <button class="nav-link">博客</button>
+  </div>
+</nav>
+
+<div class="demo-body" style="margin-top:52px">
+  <div class="label">方案 B — Elevated 光影层次</div>
+
+  <div class="eyebrow">Overview</div>
+  <h2>设计理念</h2>
+  <p class="sub">有科技感、有质感，但不花哨。精准的发光效果强化层次，流光动效增加精致感。</p>
+
+  <div class="cards">
+    <div class="card card-a">
+      <div class="card-title">🧪 测试专家</div>
+      <div class="card-desc">悬停出现蓝色光晕，卡片整体上浮 3px，层次感明确</div>
+    </div>
+    <div class="card card-b">
+      <div class="card-title">🤖 AI 测试先行</div>
+      <div class="card-desc">悬停出现绿色光晕，每张卡片颜色独立，视觉记忆点强</div>
+    </div>
+    <div class="card card-c">
+      <div class="card-title">🏆 多项荣誉</div>
+      <div class="card-desc">悬停出现紫色光晕，搭配内圈描边营造精致感</div>
+    </div>
+  </div>
+
+  <div class="btns">
+    <button class="btn btn-primary">查看经历 → <small>（hover 看流光）</small></button>
+    <button class="btn btn-outline">联系我</button>
+  </div>
+
+  <div class="chips">
+    <span class="chip chip-a">AI测试</span>
+    <span class="chip chip-b">自动化</span>
+    <span class="chip chip-c">测试管理</span>
+    <span class="chip chip-d">Python</span>
+    <span class="chip chip-a">Jenkins</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat stat-a"><div class="stat-num">10+</div><div class="stat-label">年测试经验</div></div>
+    <div class="stat stat-b"><div class="stat-num">30+</div><div class="stat-label">交付项目</div></div>
+    <div class="stat stat-c"><div class="stat-num">80%</div><div class="stat-label">自动化覆盖率</div></div>
+    <div class="stat stat-d"><div class="stat-num">60%</div><div class="stat-label">AI提效幅度</div></div>
+  </div>
+
+  <div class="note">
+    <strong>方案 B 特征汇总：</strong>
+    导航底边渐变彩色线（半透明）·
+    卡片悬停按类型 glow 光晕（蓝/绿/紫）·
+    主按钮 hover 时流光从左扫到右 ·
+    Chip 多彩配色（蓝/绿/紫/橙）·
+    数字条底部对应色条装饰 ·
+    eyebrow 前置渐变短线 ·
+    页面内容入场淡入上移
+  </div>
+</div>
+</body>
+</html>

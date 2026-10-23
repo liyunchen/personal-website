@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>方案 C — Vivid 鲜活有张力</title>
+<style>
+:root{
+  /* C方案：主色升温，从冷蓝偏向天蓝靛蓝 */
+  --n-50:oklch(98.5% 0.003 250);--n-100:oklch(96% 0.005 250);--n-200:oklch(91% 0.007 250);
+  --n-300:oklch(83% 0.009 250);--n-500:oklch(50% 0.012 250);--n-900:oklch(14% 0.012 250);
+  /* accent 色温偏向 225°，提纯更鲜明 */
+  --a-100:oklch(93% 0.07 225);--a-200:oklch(87% 0.10 225);--a-400:oklch(63% 0.18 225);--a-500:oklch(51% 0.20 225);
+  /* 配色提纯 5% */
+  --green:oklch(51% 0.18 152);--green-lt:oklch(94% 0.07 152);
+  --purple:oklch(55% 0.20 300);--purple-lt:oklch(94% 0.06 300);
+  --amber:oklch(60% 0.19 82);--amber-lt:oklch(95% 0.08 82);
+  --bg:var(--n-50);--surface:oklch(100% 0 0);--raised:var(--n-100);--border:var(--n-200);
+  --text:var(--n-900);--muted:var(--n-500);--accent:var(--a-500);--accent-lt:var(--a-100);
+  --sh-sm:0 1px 4px oklch(16% .01 250/.08),0 2px 6px oklch(16% .01 250/.05);
+  --sh-md:0 4px 14px oklch(16% .01 250/.10),0 2px 4px oklch(16% .01 250/.06);
+  --font:'PingFang SC','Microsoft YaHei',sans-serif;--mono:'JetBrains Mono','Fira Code',monospace;
+  --r:6px;--r-md:10px;--r-lg:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.75}
+
+/* 导航同 A/B，标准款 */
+.nav{background:oklch(100% 0 0/.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);
+  height:52px;display:flex;align-items:center;padding:0 32px;justify-content:space-between;
+  box-shadow:0 1px 2px oklch(16% .01 250/.06)}
+.nav-logo{font-weight:800;font-size:17px;color:var(--text)}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:2px}
+.nav-link{padding:5px 13px;border-radius:var(--r);font-size:14px;color:var(--muted);cursor:pointer;
+  font-weight:500;border:none;background:transparent;font-family:var(--font);
+  transition:color .14s,background .14s}
+.nav-link:hover{color:var(--text);background:var(--raised)}
+.nav-link.active{color:var(--accent);background:var(--accent-lt)}
+
+.demo-body{max-width:960px;margin:0 auto;padding:40px 24px}
+.label{display:inline-block;background:var(--accent-lt);color:var(--accent);font-size:11px;
+  font-weight:700;padding:4px 12px;border-radius:999px;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
+h2{font-size:22px;font-weight:800;margin-bottom:8px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:32px}
+
+/* ── C方案：卡片 hover scale + glow，视觉冲击更强 ── */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:22px;box-shadow:var(--sh-sm);cursor:pointer;
+  transition:border-color .2s,box-shadow .25s,transform .22s cubic-bezier(.34,1.56,.64,1)}
+.card:hover{
+  transform:scale(1.022);
+  border-color:var(--a-400);
+  box-shadow:var(--sh-md),0 0 28px oklch(51% .20 225/.14);
+}
+.card-title{font-weight:700;font-size:15px;margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--muted);line-height:1.7}
+
+/* ── C方案：按钮纯色 + hover 时渐变反向扫入 ── */
+.btns{display:flex;gap:12px;margin-bottom:40px}
+.btn{padding:10px 22px;border-radius:var(--r-md);font-size:14px;font-weight:600;cursor:pointer;
+  border:none;font-family:var(--font);transition:all .18s;position:relative;overflow:hidden}
+.btn-primary{
+  /* 默认纯色 */
+  background:var(--a-500);color:#fff;
+  box-shadow:0 2px 10px oklch(51% .20 225/.30);
+}
+/* hover 时渐变反向扫入 */
+.btn-primary::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--purple),var(--a-500));
+  opacity:0;transition:opacity .22s ease;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px oklch(51% .20 225/.40)}
+.btn-primary:hover::before{opacity:1}
+.btn-primary:active{transform:translateY(1px);box-shadow:0 1px 6px oklch(51% .20 225/.20)}
+.btn-primary span{position:relative;z-index:1}
+.btn-outline{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
+.btn-outline:active{transform:translateY(1px)}
+
+/* ── C方案：chip 彩色下划线样式 ── */
+.chips{display:flex;gap:8px;margin-bottom:40px;flex-wrap:wrap}
+.chip{display:inline-block;padding:4px 12px;border-radius:var(--r);font-size:12px;font-weight:600;
+  background:var(--raised);color:var(--text);border:none;cursor:pointer;
+  position:relative;transition:color .16s,background .16s,transform .14s;
+}
+/* 彩色下划线 */
+.chip::after{content:'';position:absolute;bottom:0;left:12px;right:12px;height:2px;
+  background:var(--chip-clr,var(--accent));border-radius:1px;
+  transform:scaleX(0);transition:transform .18s ease}
+.chip:hover{color:var(--chip-clr,var(--accent));background:var(--surface);transform:translateY(-2px)}
+.chip:hover::after{transform:scaleX(1)}
+.chip-a{--chip-clr:var(--a-500)}
+.chip-b{--chip-clr:var(--green)}
+.chip-c{--chip-clr:var(--purple)}
+.chip-d{--chip-clr:var(--amber)}
+
+/* ── C方案：数字带个性化颜色，hover 时高亮 ── */
+.stats{display:flex;border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;background:var(--surface);box-shadow:var(--sh-sm);margin-bottom:40px}
+.stat{flex:1;padding:22px 16px;text-align:center;border-right:1px solid var(--border);
+  cursor:default;transition:background .18s}
+.stat:last-child{border-right:none}
+.stat:hover{background:var(--raised)}
+.stat-num{font-size:36px;font-weight:800;line-height:1.1;
+  background:linear-gradient(160deg,var(--a-500),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-a .stat-num{background:linear-gradient(160deg,var(--a-500),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-b .stat-num{background:linear-gradient(160deg,var(--green),oklch(55% .18 175));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-c .stat-num{background:linear-gradient(160deg,var(--purple),var(--a-500));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-d .stat-num{background:linear-gradient(160deg,var(--amber),oklch(60% .18 50));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:12px;color:var(--muted);margin-top:5px}
+
+/* ── C方案：tag-filter 激活有弹出 scale ── */
+.tags{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap}
+.tag{padding:6px 16px;border-radius:999px;font-size:13px;cursor:pointer;font-family:var(--font);font-weight:600;
+  background:var(--surface);border:1.5px solid var(--border);color:var(--muted);
+  transition:all .16s cubic-bezier(.34,1.56,.64,1)}
+.tag:hover{background:var(--accent-lt);border-color:var(--a-400);color:var(--accent)}
+.tag.active{background:var(--a-500);border-color:var(--a-500);color:#fff;
+  transform:scale(1.08);box-shadow:0 4px 14px oklch(51% .20 225/.28)}
+
+/* ── C方案：hero-name 渐变角度 160° 更有动感 ── */
+.hero-name{font-size:42px;font-weight:800;line-height:1.15;margin-bottom:12px}
+.hero-name em{font-style:normal;
+  background:linear-gradient(160deg,var(--a-500),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* eyebrow */
+.eyebrow{font-size:12px;font-weight:700;color:var(--accent);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;
+  display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:'';width:16px;height:2px;background:var(--accent);border-radius:1px;flex-shrink:0}
+
+/* 页面入场 */
+@keyframes pageEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.demo-body>*{animation:pageEnter .35s ease both}
+.demo-body>*:nth-child(n+2){animation-delay:calc((var(--i,0)) * .05s)}
+
+.note{background:var(--raised);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:16px 20px;font-size:13px;color:var(--muted);line-height:1.7}
+.note strong{color:var(--text)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">LI<span>.</span>YC</div>
+  <div class="nav-links">
+    <button class="nav-link active">首页</button>
+    <button class="nav-link">经历</button>
+    <button class="nav-link">项目</button>
+    <button class="nav-link">AI 技能</button>
+    <button class="nav-link">荣誉墙</button>
+    <button class="nav-link">博客</button>
+  </div>
+</nav>
+
+<div class="demo-body" style="margin-top:52px">
+  <div class="label">方案 C — Vivid 鲜活有张力</div>
+
+  <div class="eyebrow">Overview</div>
+  <h2>设计理念</h2>
+  <p class="sub">活泼、有个性、视觉记忆点强。颜色更纯粹，动效带弹性，每次交互都有「弹出感」。</p>
+
+  <p class="hero-name">欢迎访问，<em>李运辰</em></p>
+
+  <div class="cards" style="margin-top:24px">
+    <div class="card">
+      <div class="card-title">🧪 测试专家</div>
+      <div class="card-desc">悬停时整体 scale(1.022) + 蓝色光晕，有「弹出」的物理感</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🤖 AI 测试先行</div>
+      <div class="card-desc">cubic-bezier 弹性曲线，不是线性缩放，更有生命力</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏆 多项荣誉</div>
+      <div class="card-desc">颜色比当前版本更纯、更鲜，整体视觉能量感更强</div>
+    </div>
+  </div>
+
+  <div class="btns">
+    <button class="btn btn-primary"><span>查看经历 → </span><small style="position:relative;z-index:1">（hover 看渐变扫入）</small></button>
+    <button class="btn btn-outline">联系我</button>
+  </div>
+
+  <div class="chips">
+    <span class="chip chip-a">AI测试</span>
+    <span class="chip chip-b">自动化</span>
+    <span class="chip chip-c">测试管理</span>
+    <span class="chip chip-d">Python</span>
+    <span class="chip chip-a">Jenkins</span>
+  </div>
+
+  <div class="tags">
+    <button class="tag active">全部</button>
+    <button class="tag">AI测试</button>
+    <button class="tag">自动化</button>
+    <button class="tag">团队管理</button>
+    <button class="tag">职业发展</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat stat-a"><div class="stat-num">10+</div><div class="stat-label">年测试经验</div></div>
+    <div class="stat stat-b"><div class="stat-num">30+</div><div class="stat-label">交付项目</div></div>
+    <div class="stat stat-c"><div class="stat-num">80%</div><div class="stat-label">自动化覆盖率</div></div>
+    <div class="stat stat-d"><div class="stat-num">60%</div><div class="stat-label">AI提效幅度</div></div>
+  </div>
+
+  <div class="note">
+    <strong>方案 C 特征汇总：</strong>
+    主色升温（240°→225°），green/amber/purple 对应提纯 ·
+    卡片 hover 用弹性曲线 scale(1.022)，非纯位移 ·
+    主按钮默认纯色，hover 时渐变从背后扫入 ·
+    Chip 改为灰底+彩色下划线，hover 下划线展开 ·
+    Tag 激活态有 scale(1.08) 弹出感 ·
+    数字条每列独立渐变色，hover 轻微高亮背景 ·
+    Hero name 渐变角度 160°（当前 135°），更有动感
+  </div>
+</div>
+</body>
+</html>

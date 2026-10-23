@@ -1,0 +1,27 @@
+[Unit]
+Description=Portfolio Content API (resume site backend)
+Documentation=file:///www/wwwroot/your-project/api/app.py
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/www/wwwroot/your-project/api
+Environment="API_HOST=127.0.0.1"
+Environment="API_PORT=8101"
+Environment="API_BASE_DIR=/www/wwwroot/your-project/api"
+EnvironmentFile=-/www/wwwroot/your-project/api/.env
+ExecStart=/usr/bin/python3 /www/wwwroot/your-project/api/app.py
+Restart=always
+RestartSec=3
+StandardOutput=append:/var/log/portfolio-api.log
+StandardError=append:/var/log/portfolio-api.err.log
+
+# 安全加固
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

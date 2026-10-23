@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>李运辰 · 测试专家</title>
+<style>
+:root {
+  --n-50:  oklch(98.5% 0.003 250);
+  --n-100: oklch(96%   0.005 250);
+  --n-200: oklch(91%   0.007 250);
+  --n-300: oklch(83%   0.009 250);
+  --n-400: oklch(68%   0.010 250);
+  --n-500: oklch(53%   0.010 250);
+  --n-700: oklch(35%   0.010 250);
+  --n-900: oklch(16%   0.010 250);
+  --a-100: oklch(94%   0.06  240);
+  --a-200: oklch(88%   0.09  240);
+  --a-400: oklch(64%   0.16  240);
+  --a-500: oklch(52%   0.18  240);
+  --a-600: oklch(44%   0.18  240);
+  --green:     oklch(53% 0.16 152);
+  --green-lt:  oklch(95% 0.06 152);
+  --amber:     oklch(62% 0.17  82);
+  --amber-lt:  oklch(96% 0.07  82);
+  --red:       oklch(56% 0.18  25);
+  --red-lt:    oklch(96% 0.06  25);
+  --purple:    oklch(58% 0.17 300);
+  --purple-lt: oklch(95% 0.05 300);
+  --bg:        var(--n-50);
+  --surface:   oklch(100% 0 0);
+  --raised:    var(--n-100);
+  --border:    var(--n-200);
+  --text:      var(--n-900);
+  --muted:     var(--n-500);
+  --accent:    var(--a-500);
+  --accent-lt: var(--a-100);
+  --accent-dim:var(--a-400);
+  --sh-xs: 0 1px 2px oklch(16% .01 250/.06);
+  --sh-sm: 0 1px 4px oklch(16% .01 250/.08), 0 2px 6px oklch(16% .01 250/.05);
+  --sh-md: 0 4px 14px oklch(16% .01 250/.10), 0 2px 4px oklch(16% .01 250/.06);
+  --sh-lg: 0 8px 28px oklch(16% .01 250/.13), 0 3px 6px oklch(16% .01 250/.07);
+  --r:6px;--r-md:10px;--r-lg:16px;--r-xl:22px;
+  --font:'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif;
+  --mono:'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.75}
+a{color:var(--accent)}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--n-300);border-radius:3px}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;background:oklch(100% 0 0/.96);backdrop-filter:blur(20px);height:52px;display:flex;align-items:center;padding:0 clamp(16px,5vw,72px);justify-content:space-between;position:fixed}
+/* B方案：渐变彩色底线替换纯边框 */
+.nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--a-400),var(--purple),var(--a-400),transparent);opacity:.4;pointer-events:none}
+.nav-logo{font-weight:800;font-size:17px;cursor:pointer;color:var(--text);letter-spacing:.3px}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:2px}
+.nav-link{padding:5px 13px;border-radius:var(--r);font-size:14px;color:var(--muted);cursor:pointer;font-weight:500;border:none;background:transparent;font-family:var(--font);transition:color .14s,background .14s}
+.nav-link:hover{color:var(--text);background:var(--raised)}
+.nav-link.active{color:var(--accent);background:var(--accent-lt)}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:52px}
+/* B方案：页面切换入场动画 */
+@keyframes pageEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.page.active{display:block;animation:pageEnter .3s ease both}
+.container{max-width:1100px;margin:0 auto;padding:0 clamp(16px,5vw,48px)}
+.section{padding:64px 0}
+.section-eyebrow{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;font-family:var(--font);display:flex;align-items:center;gap:8px}
+.section-eyebrow::before{content:'';width:16px;height:2px;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:1px;flex-shrink:0}
+.section-title{font-size:clamp(22px,3vw,30px);font-weight:800;margin-bottom:6px}
+.section-sub{color:var(--muted);font-size:15px;margin-bottom:36px}
+
+/* HERO */
+.hero{min-height:auto;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:48px clamp(16px,5vw,72px);max-width:1200px;margin:0 auto}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--green-lt);border:1px solid oklch(82% .10 152);border-radius:999px;padding:5px 14px;font-size:13px;color:var(--green);margin-bottom:18px;font-family:var(--mono);font-weight:600}
+.hero-eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-name{font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.15;margin-bottom:10px;white-space:nowrap}
+.hero-name em{font-style:normal;background:linear-gradient(135deg,var(--a-500),var(--purple));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-role{font-size:clamp(13px,1.4vw,15px);font-weight:500;color:var(--muted);margin-bottom:14px;line-height:1.9;letter-spacing:.1px}
+.hero-desc{font-size:14px;color:var(--muted);max-width:480px;margin-bottom:24px;line-height:1.85}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+
+/* AVATAR */
+.avatar-wrap{display:flex;justify-content:flex-start;align-items:center;position:relative;margin-bottom:20px}
+.avatar-ring{
+  width:80px;height:80px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--a-500),var(--purple));
+  padding:2px;box-shadow:var(--sh-sm),0 0 16px oklch(52% .18 240/.18);
+  position:relative;flex-shrink:0;
+}
+.avatar-ring::before{
+  content:'';position:absolute;inset:-4px;border-radius:50%;
+  background:conic-gradient(var(--a-500),var(--purple),var(--a-500));
+  z-index:0;animation:avatarRotate 6s linear infinite;mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));
+}
+@keyframes avatarRotate{to{transform:rotate(360deg)}}
+.avatar-img{
+  width:100%;height:100%;border-radius:50%;object-fit:cover;
+  position:relative;z-index:1;display:block;
+}
+
+/* STATS BAR */
+.stats-bar{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);box-shadow:var(--sh-sm);margin-bottom:0}
+.stat-item{flex:1;padding:24px 16px;text-align:center;border-right:1px solid var(--border);position:relative;overflow:hidden}
+.stat-item:last-child{border-right:none}
+/* B方案：每格底部彩色线，按顺序分配四色 */
+.stat-item:nth-child(1)::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--a-500)}
+.stat-item:nth-child(2)::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--green)}
+.stat-item:nth-child(3)::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--purple)}
+.stat-item:nth-child(4)::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--amber)}
+.stat-item:nth-child(5)::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--a-500)}
+.stat-num{font-size:clamp(28px,3.5vw,38px);font-weight:800;background:linear-gradient(135deg,var(--a-500),var(--purple));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.stat-label{font-size:12px;color:var(--muted);margin-top:6px;font-weight:500}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:var(--r-md);font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .18s;text-decoration:none;position:relative;overflow:hidden}
+/* B方案：primary 按钮流光 shimmer */
+.btn-primary{background:linear-gradient(135deg,var(--a-500),var(--purple));color:#fff;box-shadow:0 2px 10px oklch(52% .18 240/.30)}
+.btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(105deg,transparent,oklch(100% 0 0/.25),transparent);transition:left .5s ease;pointer-events:none}
+.btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 4px 18px oklch(52% .18 240/.40)}
+.btn-primary:hover::after{left:150%}
+.btn-primary:active{transform:translateY(1px);box-shadow:0 1px 6px oklch(52% .18 240/.20)}
+.btn-outline{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt);text-decoration:none}
+.btn-outline:active{transform:translateY(1px)}
+
+/* CODE CARD */
+.hero-section{background:linear-gradient(135deg,oklch(93% .06 240) 0%,oklch(95% .04 270) 45%,oklch(97% .02 260) 100%)}
+.code-card{background:#fff;border:1px solid oklch(90% .01 250);border-radius:var(--r-xl);padding:26px 28px;font-family:var(--mono);font-size:13px;line-height:2;box-shadow:0 8px 36px oklch(55% .10 240/.15),0 2px 8px oklch(55% .10 240/.08);position:relative;overflow:hidden}
+.code-card::before{content:'';position:absolute;top:-60px;right:-60px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,oklch(88% .08 240/.20),transparent 70%);pointer-events:none}
+.cc-kw{color:oklch(44% .18 240)}
+.cc-fn{color:oklch(46% .15 220)}
+.cc-str{color:oklch(52% .16 32)}
+.cc-key{color:oklch(42% .14 260)}
+.cc-cmt{color:oklch(58% .02 250)}
+.cc-bool{color:oklch(44% .16 152)}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;
+  transition:border-color .2s,box-shadow .25s,transform .2s;box-shadow:var(--sh-sm)}
+/* B方案：卡片悬停按 accent 色 glow */
+.card:hover{border-color:var(--a-400);box-shadow:var(--sh-md),0 0 0 3px var(--accent-lt),0 8px 24px oklch(52% .18 240/.13);transform:translateY(-3px)}
+
+/* OVERVIEW GRID */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;padding-bottom:72px}
+.ov-card{border-top:3px solid transparent}
+
+/* TECH BADGE */
+.tech-badge{display:inline-block;padding:3px 10px;border-radius:var(--r);font-size:12px;background:var(--raised);color:var(--muted);border:1px solid var(--border);font-family:var(--mono)}
+
+/* PILL */
+.pill{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700}
+
+
+/* SECTION spacing tighten */
+.section{padding:48px 0}
+.section-sub{color:var(--muted);font-size:15px;margin-bottom:28px}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:44px}
+.timeline::before{content:'';position:absolute;left:16px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent-dim),var(--n-200))}
+.tl-item{position:relative;margin-bottom:28px}
+.tl-dot{position:absolute;left:-34px;top:22px;width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 2px var(--accent-dim)}
+.tl-dot.edu{background:var(--purple)}
+.tl-dot.edu{box-shadow:0 0 0 2px var(--purple)}
+
+/* VIEW TOGGLE (new) */
+.view-toggle{display:inline-flex;background:var(--raised);border:1px solid var(--border);border-radius:var(--r-md);padding:3px;margin-bottom:28px}
+.view-toggle button{padding:7px 20px;border-radius:7px;font-size:13px;font-weight:600;border:none;background:transparent;color:var(--muted);cursor:pointer;font-family:var(--font);transition:all .15s}
+.view-toggle button.active{background:var(--surface);color:var(--accent);box-shadow:var(--sh-xs)}
+
+/* ABILITY MATRIX (new) */
+.ability-group{margin-bottom:28px}
+.ability-group-title{font-weight:700;font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ability-group-title .icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.ability-row{display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.ability-name{font-size:13px;font-weight:600}
+.ability-bar-wrap{display:flex;align-items:center;gap:10px}
+.ability-bar{flex:1;height:8px;border-radius:4px;background:var(--raised);overflow:hidden}
+.ability-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.ability-level{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap;width:50px;text-align:right}
+
+/* CARD GRID */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.card-thumb{height:160px;background:var(--raised);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;border-bottom:1px solid var(--border);position:relative;border-radius:var(--r-lg) var(--r-lg) 0 0;overflow:hidden}
+.card-body{padding:20px}
+.thumb-platform{background:linear-gradient(135deg,oklch(94% .07 240),oklch(97% .04 200))}
+.thumb-tool{background:linear-gradient(135deg,oklch(94% .07 152),oklch(97% .04 180))}
+.thumb-blog{background:linear-gradient(135deg,oklch(95% .07 300),oklch(97% .04 260))}
+.thumb-home{background:linear-gradient(135deg,oklch(96% .06 82),oklch(97% .04 60))}
+.thumb-ai{background:linear-gradient(135deg,oklch(94% .07 240),oklch(95% .06 300))}
+.thumb-work{background:linear-gradient(135deg,oklch(94% .07 240),oklch(97% .04 200))}
+.thumb-academic{background:linear-gradient(135deg,oklch(95% .07 300),oklch(97% .04 260))}
+.thumb-personal{background:linear-gradient(135deg,oklch(96% .06 82),oklch(97% .04 60))}
+
+/* TAG FILTER */
+.tag-filter{padding:6px 16px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:13px;cursor:pointer;font-family:var(--font);font-weight:500;transition:all .18s}
+.tag-filter:hover{background:var(--accent-lt);border-color:var(--a-400);color:var(--accent)}
+.tag-filter.active-tag{background:var(--a-500);border-color:var(--a-500);color:#fff;box-shadow:0 3px 12px oklch(52% .18 240/.28)}
+
+/* CHIP — B方案多彩配色 */
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;
+  background:var(--accent-lt);color:var(--accent);border:1px solid var(--a-200);
+  cursor:pointer;transition:transform .14s,box-shadow .16s}
+.chip:hover{transform:translateY(-2px);box-shadow:0 4px 12px oklch(52% .18 240/.18)}
+
+/* PROJECT EXPAND (new) */
+.project-detail{overflow:hidden;max-height:0;transition:max-height .3s ease,opacity .3s ease;opacity:0}
+.project-detail.open{max-height:600px;opacity:1}
+.star-block{padding:12px 0;border-bottom:1px solid var(--border)}
+.star-block:last-child{border-bottom:none}
+.star-label{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1px}
+.star-text{font-size:13px;color:var(--muted);line-height:1.8}
+
+/* HONOR FILTER TAGS (new) */
+.honor-tags{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+
+/* ── B方案：页面切换入场动画 ── */
+@keyframes pageEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.page.active>*{animation:pageEnter .35s ease both}
+.page.active>*:nth-child(1){animation-delay:.02s}
+.page.active>*:nth-child(2){animation-delay:.06s}
+.page.active>*:nth-child(3){animation-delay:.10s}
+.page.active>*:nth-child(4){animation-delay:.14s}
+
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;gap:32px}
+  .stats-bar{flex-direction:column}
+  .stat-item{border-right:none;border-bottom:1px solid var(--border)}
+  .stat-item:last-child{border-bottom:none}
+  .ability-row{grid-template-columns:1fr;gap:6px}
+}
+
+/* ── CONNECT HUB ── */
+.connect-hub{
+  position:relative;padding:48px 0;overflow:hidden;
+  background:
+    radial-gradient(ellipse 50% 60% at 20% 30%,oklch(94% .06 240/.5),transparent),
+    radial-gradient(ellipse 50% 60% at 80% 70%,oklch(95% .05 300/.4),transparent),
+    radial-gradient(ellipse 40% 50% at 50% 50%,oklch(96% .05 152/.3),transparent),
+    var(--bg);
+}
+.hub-label{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.hub-label-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite}
+.hub-label-text{font-family:var(--font);font-size:12px;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase;font-weight:700}
+
+.hub-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* Glow contact cards */
+.hub-contact-list{display:flex;flex-direction:column;gap:10px}
+.hub-contact-card{
+  display:flex;align-items:center;gap:14px;padding:16px 18px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s,border-color .2s;
+}
+.hub-contact-card::after{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--bar);opacity:.5;transition:opacity .2s;
+}
+.hub-contact-card:hover{transform:translateX(4px);border-color:var(--bar);box-shadow:0 0 20px oklch(52% .18 240/.12)}
+.hub-contact-card:hover::after{opacity:1}
+.hub-contact-icon{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;background:var(--bar-bg);border:1px solid var(--bar-border);flex-shrink:0;
+}
+.hub-contact-info{flex:1;min-width:0}
+.hub-contact-key{font-size:11px;font-family:var(--font);color:var(--muted);margin-bottom:2px;letter-spacing:.3px}
+.hub-contact-val{font-size:14px;font-weight:700;color:var(--text)}
+.hub-contact-go{color:var(--muted);font-size:14px;transition:color .15s,transform .15s}
+.hub-contact-card:hover .hub-contact-go{color:var(--bar);transform:translateX(3px)}
+
+/* Glow site cards */
+.hub-sites-wrap{display:flex;flex-direction:column}
+.hub-sites-label{font-family:var(--font);font-size:12px;letter-spacing:1px;color:var(--accent);margin-bottom:12px;text-transform:uppercase;font-weight:700}
+.hub-sites-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1}
+.hub-site-card{
+  position:relative;padding:18px 16px;border-radius:var(--r-md);cursor:pointer;overflow:hidden;
+  background:var(--surface);border:1px solid var(--border);
+  transition:transform .2s,box-shadow .2s,border-color .2s;
+}
+.hub-site-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--site-bar);opacity:.6;transition:opacity .2s;
+}
+.hub-site-card:hover{transform:translateY(-4px);border-color:var(--site-bar);box-shadow:0 8px 24px oklch(52% .18 240/.1)}
+.hub-site-card:hover::before{opacity:1;height:4px}
+.hub-site-icon{font-size:20px;margin-bottom:8px}
+.hub-site-name{font-weight:700;font-size:14px;margin-bottom:2px}
+.hub-site-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.hub-site-arrow{position:absolute;bottom:12px;right:14px;color:var(--muted);font-size:15px;transition:color .15s,transform .15s}
+.hub-site-card:hover .hub-site-arrow{color:var(--site-bar);transform:translate(3px,-3px)}
+
+@media(max-width:768px){
+  .hub-grid{grid-template-columns:1fr}
+  .hub-sites-grid{grid-template-columns:1fr 1fr}
+}
+
+/* BLOG DETAIL */
+#readingBar{position:fixed;top:52px;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--purple));z-index:300;width:0%;transition:width .1s linear;pointer-events:none}
+.article-wrap{max-width:1100px;margin:0 auto;padding:48px clamp(16px,5vw,48px) 80px;display:grid;grid-template-columns:1fr 260px;gap:56px;align-items:start}
+@media(max-width:900px){.article-wrap{grid-template-columns:1fr}}
+.article-back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:14px;font-weight:500;cursor:pointer;border:none;background:none;font-family:var(--font);padding:6px 0;margin-bottom:32px;transition:color .14s}
+.article-back:hover{color:var(--accent)}
+.article-title{font-size:clamp(22px,3.5vw,34px);font-weight:800;line-height:1.25;margin:14px 0 18px;color:var(--text)}
+.article-meta{display:flex;align-items:center;gap:20px;color:var(--muted);font-size:13px;padding-bottom:28px;border-bottom:1px solid var(--border)}
+.article-body{font-size:15px;line-height:1.9;color:var(--text)}
+.article-body h2{font-size:20px;font-weight:800;margin:40px 0 14px;border-left:3px solid var(--accent);padding-left:14px;color:var(--text)}
+.article-body h3{font-size:16px;font-weight:700;margin:28px 0 10px;color:var(--text)}
+.article-body p{margin-bottom:18px}
+.article-body ul,.article-body ol{margin:0 0 18px 22px}
+.article-body li{margin-bottom:7px;line-height:1.85}
+.article-body strong{font-weight:700}
+.article-body code{font-family:var(--mono);font-size:13px;background:var(--raised);border:1px solid var(--border);border-radius:4px;padding:2px 6px;color:var(--accent)}
+.article-body pre{background:oklch(15% .012 250);border-radius:var(--r-md);padding:20px 22px;overflow-x:auto;margin:0 0 20px;border:1px solid oklch(26% .016 250)}
+.article-body pre code{background:none;border:none;padding:0;color:oklch(88% .01 250);font-size:13px;line-height:1.85}
+.article-callout{background:var(--accent-lt);border:1px solid var(--a-200);border-left:3px solid var(--accent);border-radius:var(--r-md);padding:16px 18px;margin:0 0 20px;font-size:14px;line-height:1.8}
+.article-callout.warn{background:var(--amber-lt);border-color:var(--amber);border-left-color:var(--amber)}
+.toc-wrap{position:sticky;top:72px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg)}
+.toc-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.toc-list{list-style:none;padding:0;margin:0}
+.toc-item{padding:6px 0 6px 12px;font-size:13px;cursor:pointer;color:var(--muted);transition:color .14s;border-left:2px solid transparent;margin-bottom:2px;line-height:1.4}
+.toc-item:hover{color:var(--text);border-left-color:var(--border)}
+.toc-item.toc-active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.toc-item.toc-h3{padding-left:22px;font-size:12px}
+.related-wrap{margin-top:56px;padding-top:40px;border-top:1px solid var(--border)}
+.related-title{font-size:18px;font-weight:800;margin-bottom:20px}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo" onclick="showPage('home')">LI<span>.</span>YC</div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('home')">首页</button>
+    <button class="nav-link" onclick="showPage('experience')">经历</button>
+    <button class="nav-link" onclick="showPage('projects')">项目</button>
+    <button class="nav-link" onclick="showPage('ai')">AI 技能</button>
+    <button class="nav-link" onclick="showPage('honors')">荣誉墙</button>
+    <button class="nav-link" onclick="showPage('blog')">博客</button>
+  </div>
+</nav>
+
+<!-- ████ HOME ████ -->
+<div id="page-home" class="page active">
+  <div class="hero-section">
+  <div class="hero">
+    <div>
+      <div class="avatar-wrap">
+        <div class="avatar-ring">
+          <img class="avatar-img" src="avatar.jpg" alt="李运辰" />
+        </div>
+      </div>
+
+      <h1 class="hero-name">欢迎访问，<em>李运辰</em></h1>
+      <p class="hero-role">测试主管 · 测试经理 · 测试专家 · AI测试工程师</p>
+      <p class="hero-desc">专注于互联网产品质量保障，擅长测试体系建设、AI辅助测试落地、自动化框架研发。用 AI 重新定义测试效率。</p>
+      <div class="hero-btns">
+        <button class="btn btn-primary" onclick="showPage('experience')">查看经历 →</button>
+        <button class="btn btn-outline" onclick="scrollContact()">联系我</button>
+      </div>
+    </div>
+    <div id="heroCard"></div>
+  </div>
+  </div><!-- /hero-section -->
+  <div class="connect-hub" id="connectHub">
+    <div class="container" style="position:relative;z-index:1">
+      <div class="hub-label"><span class="hub-label-dot"></span><span class="hub-label-text">CONNECT HUB</span></div>
+      <div class="hub-grid">
+        <!-- 联系方式卡片 -->
+        <div class="hub-contact-list" id="hubContactList"></div>
+        <!-- 站点卡片 -->
+        <div class="hub-sites-wrap">
+          <div class="hub-sites-label">我的站点</div>
+          <div class="hub-sites-grid" id="hubSitesGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 量化数字条 -->
+  <div class="container" style="padding-top:0;padding-bottom:48px">
+    <div class="stats-bar" id="statsBar"></div>
+  </div>
+
+  <div style="height:1px;background:linear-gradient(to right,transparent,var(--border),transparent)"></div>
+
+  <div class="container" style="padding-top:48px">
+    <div class="section-eyebrow">Overview</div>
+    <div class="section-title">关于我</div>
+    <div class="section-sub">测试领域的全链路实践者，从执行到管理，从传统到 AI</div>
+    <div class="overview-grid" id="overviewCards"></div>
+  </div>
+
+</div>
+
+<!-- ████ EXPERIENCE ████ -->
+<div id="page-experience" class="page">
+  <div class="container section">
+    <div class="section-eyebrow">Experience</div>
+    <div class="section-title">我的经历</div>
+    <div class="section-sub">职业成长轨迹 · 从执行到管理，从传统到 AI</div>
+    <div class="view-toggle">
+      <button id="btn-timeline" class="active" onclick="switchView('timeline')">⏱ 时间线</button>
+      <button id="btn-ability" onclick="switchView('ability')">🧩 能力维度</button>
+    </div>
+    <div id="view-timeline">
+      <div class="timeline" id="expTimeline"></div>
+    </div>
+    <div id="view-ability" style="display:none">
+      <div id="abilityMatrix"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ████ PROJECTS ████ -->
+<div id="page-projects" class="page">
+  <div class="container section">
+    <div class="section-eyebrow">Projects</div>
+    <div class="section-title">项目经历</div>
+    <div class="section-sub">工作项目 · 学术项目 · 个人站点，点击卡片查看详情</div>
+    <div style="display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap" id="projectTags"></div>
+    <div class="card-grid" id="projectsGrid"></div>
+  </div>
+</div>
+
+<!-- ████ AI SKILLS ████ -->
+<div id="page-ai" class="page">
+  <div class="container section">
+    <div class="section-eyebrow">AI Skills</div>
+    <div class="section-title">AI 探索技能</div>
+    <div class="section-sub">将 AI 融入测试工程实践的具体落地成果</div>
+    <div class="card-grid" id="aiGrid"></div>
+  </div>
+</div>
+
+<!-- ████ HONORS ████ -->
+<div id="page-honors" class="page">
+  <div class="container section">
+    <div class="section-eyebrow">Honors</div>
+    <div class="section-title">荣誉墙</div>
+    <div class="section-sub">在校获奖 · 工作荣誉 · 认证证书</div>
+    <div class="honor-tags" id="honorTags"></div>
+    <div class="timeline" id="honorsTimeline"></div>
+  </div>
+</div>
+
+<!-- ████ BLOG DETAIL ████ -->
+<div id="page-blog-detail" class="page">
+  <div id="readingBar"></div>
+  <div class="container" style="padding-top:32px">
+    <button class="article-back" onclick="showPage('blog')">← 返回博客</button>
+  </div>
+  <div class="article-wrap">
+    <!-- 主内容 -->
+    <article id="articleContent"></article>
+    <!-- 目录 -->
+    <aside>
+      <div class="toc-wrap" id="tocWrap">
+        <div class="toc-title">目录</div>
+        <ul class="toc-list" id="tocList"></ul>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div id="page-blog" class="page">
+  <div class="container section">
+    <div class="section-eyebrow">Blog</div>
+    <div class="section-title">技术博客</div>
+    <div class="section-sub">测试工程、AI 实践、团队管理的一线思考</div>
+    <div style="display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap" id="blogTags"></div>
+    <div class="card-grid" id="blogGrid"></div>
+  </div>
+</div>
+
+<script>
+/* ── router ── */
+const PAGE_IDX = {home:0,experience:1,projects:2,ai:3,honors:4,blog:5,'blog-detail':-1};
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const idx = PAGE_IDX[id];
+  if(idx !== undefined && idx >= 0) document.querySelectorAll('.nav-link')[idx].classList.add('active');
+  // 博客详情页高亮博客
+  if(id==='blog-detail') document.querySelectorAll('.nav-link')[5].classList.add('active');
+  window.scrollTo(0,0);
+  // 阅读进度条只在文章页生效
+  if(id==='blog-detail'){
+    window.addEventListener('scroll', updateReadingBar);
+  } else {
+    window.removeEventListener('scroll', updateReadingBar);
+    const bar = document.getElementById('readingBar');
+    if(bar) bar.style.width='0%';
+  }
+}
+function scrollContact(){
+  showPage('home');
+  setTimeout(()=>document.getElementById('connectHub').scrollIntoView({behavior:'smooth'}),50);
+}
+function techBadge(t){return`<span class="tech-badge">${t}</span>`}
+
+/* ── HERO CODE CARD ── */
+document.getElementById('heroCard').innerHTML=`
+<div class="code-card">
+  <div style="display:flex;gap:6px;margin-bottom:18px;align-items:center">
+    <span style="width:12px;height:12px;border-radius:50%;background:oklch(65% .18 25)"></span>
+    <span style="width:12px;height:12px;border-radius:50%;background:oklch(75% .17 82)"></span>
+    <span style="width:12px;height:12px;border-radius:50%;background:oklch(68% .16 152)"></span>
+    <span style="margin-left:auto;font-size:11px;color:oklch(48% .01 250)">profile.ts</span>
+  </div>
+  <div class="cc-cmt">// 李运辰 · 个人名片</div>
+  <div><span class="cc-kw">const</span> <span class="cc-fn">engineer</span> = {</div>
+  <div style="padding-left:20px"><span class="cc-key">name</span>:  <span class="cc-str">"李运辰"</span>,</div>
+  <div style="padding-left:20px"><span class="cc-key">role</span>:  <span class="cc-str">"测试专家 / 测试主管"</span>,</div>
+  <div style="padding-left:20px"><span class="cc-key">exp</span>:   <span class="cc-str">"10年+"</span>,</div>
+  <div style="padding-left:20px"><span class="cc-key">focus</span>: [</div>
+  <div style="padding-left:40px"><span class="cc-str">"AI辅助测试"</span>,</div>
+  <div style="padding-left:40px"><span class="cc-str">"自动化框架"</span>,</div>
+  <div style="padding-left:40px"><span class="cc-str">"质量体系建设"</span>,</div>
+  <div style="padding-left:40px"><span class="cc-str">"团队管理"</span></div>
+  <div style="padding-left:20px">],</div>
+  <div style="padding-left:20px"><span class="cc-key">open</span>:  <span class="cc-bool">true</span> <span class="cc-cmt">// 求职中</span></div>
+  <div>};</div>
+  <div style="margin-top:8px"><span class="cc-kw">export default</span> <span class="cc-fn">engineer</span>;</div>
+</div>`;
+
+/* ── HUB CONTACT LIST ── */
+const hubContacts=[
+  {icon:'📱',key:'手机',    val:'138-XXXX-XXXX',          bar:'var(--accent)',  bg:'var(--accent-lt)',   border:'var(--a-200)',  url:null},
+  {icon:'📧',key:'邮箱',    val:'your-name@example.com',   bar:'var(--green)',   bg:'var(--green-lt)',   border:'oklch(82% .1 152)',url:'mailto:your-name@example.com'},
+  {icon:'🐙',key:'GitHub',  val:'github.com/your-handle',    bar:'var(--purple)',  bg:'var(--purple-lt)',  border:'oklch(85% .08 300)',url:'https://github.com/your-handle'},
+  {icon:'💬',key:'公众号',  val:'李运辰测试笔记',           bar:'var(--amber)',   bg:'var(--amber-lt)',   border:'oklch(85% .1 82)',url:'#'},
+];
+document.getElementById('hubContactList').innerHTML=hubContacts.map(c=>`
+<div class="hub-contact-card" style="--bar:${c.bar};--bar-bg:${c.bg};--bar-border:${c.border}" ${c.url?`onclick="window.open('${c.url}')"`:''}>
+  <div class="hub-contact-icon">${c.icon}</div>
+  <div class="hub-contact-info">
+    <div class="hub-contact-key">${c.key}</div>
+    <div class="hub-contact-val">${c.val}</div>
+  </div>
+  ${c.url?'<span class="hub-contact-go">→</span>':''}
+</div>`).join('');
+
+/* ── HUB SITES ── */
+const hubSites=[
+  {icon:'🧪',name:'测试平台演示站',desc:'用例管理 · 报告 · AI辅助',url:'#',bar:'var(--accent)'},
+  {icon:'⚙️',name:'自动化工具站',  desc:'接口调试 · 数据构造',     url:'#',bar:'var(--green)'},
+  {icon:'✍️',name:'技术博客',      desc:'测试工程 · AI 实践',      url:'#',bar:'var(--purple)'},
+  {icon:'🏠',name:'个人网站',      desc:'本站 · 求职展示',          url:'#',bar:'var(--amber)'},
+];
+document.getElementById('hubSitesGrid').innerHTML=hubSites.map(s=>`
+<div class="hub-site-card" style="--site-bar:${s.bar}" onclick="window.open('${s.url}')">
+  <div>
+    <div class="hub-site-icon">${s.icon}</div>
+    <div class="hub-site-name">${s.name}</div>
+    <div class="hub-site-desc">${s.desc}</div>
+  </div>
+  <span class="hub-site-arrow">↗</span>
+</div>`).join('');
+
+/* ── STATS BAR ── */
+const stats=[
+  {num:'10+',label:'年测试经验'},
+  {num:'30+',label:'交付项目'},
+  {num:'80%',label:'自动化覆盖率'},
+  {num:'60%',label:'AI提效幅度'},
+  {num:'5+',label:'荣誉奖项'},
+];
+document.getElementById('statsBar').innerHTML=stats.map(s=>`
+<div class="stat-item">
+  <div class="stat-num">${s.num}</div>
+  <div class="stat-label">${s.label}</div>
+</div>`).join('');
+
+/* ── OVERVIEW ── */
+const overviews=[
+  {icon:'🧪',title:'测试专家',   desc:'主导测试体系建设，覆盖功能/性能/安全多维度',    color:'var(--accent)',border:'var(--accent)',   bg:'var(--accent-lt)'},
+  {icon:'🤖',title:'AI 测试先行',desc:'AI生成用例、自动化维护、报告生成三大落地技能', color:'var(--green)', border:'var(--green)',    bg:'var(--green-lt)'},
+  {icon:'🏆',title:'多项荣誉',   desc:'在校比赛获奖 + 工作优秀员工，点击荣誉墙查看', color:'var(--amber)', border:'var(--amber)',    bg:'var(--amber-lt)'},
+  {icon:'🌐',title:'多个项目',   desc:'工作测试项目、学术项目、个人站点全覆盖',       color:'var(--purple)',border:'var(--purple)',   bg:'var(--purple-lt)'},
+];
+document.getElementById('overviewCards').innerHTML=overviews.map(o=>`
+<div class="card ov-card" style="border-top-color:${o.border};cursor:pointer">
+  <div style="width:44px;height:44px;border-radius:var(--r-md);background:${o.bg};display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px">${o.icon}</div>
+  <div style="font-weight:700;font-size:16px;margin-bottom:6px;color:${o.color}">${o.title}</div>
+  <div style="font-size:13px;color:var(--muted);line-height:1.7">${o.desc}</div>
+</div>`).join('');
+
+
+/* ── EXPERIENCE DATA ── */
+const expItems=[
+  {type:'work', time:'2022.06 – 至今',  dot:'accent', org:'广州钛动科技有限公司',  role:'测试主管',
+   achievement:'主导 AI 辅助测试体系落地，自动化覆盖率从30%提升至80%，带领测试团队完成多个核心业务线质量保障工作。',
+   tags:['测试管理','AI测试','自动化']},
+  {type:'work', time:'2019.03 – 2022.05',dot:'accent',org:'某互联网科技公司',    role:'高级测试工程师',
+   achievement:'主导接口自动化框架建设，推动 CI/CD 流水线落地，版本交付效率提升 40%。',
+   tags:['自动化','CI/CD','接口测试']},
+  {type:'edu',  time:'2016 – 2019',     dot:'edu',    org:'北京信息科技大学',       role:'硕士研究生 · 软件工程',
+   achievement:'研究方向：软件质量与测试。参与多项技术开发类比赛并获奖，发表论文 X 篇。',
+   tags:['学术研究','竞赛获奖']},
+  {type:'work', time:'2014.07 – 2016.06',dot:'accent',org:'某互联网公司',  role:'测试工程师（实习/初级）',
+   achievement:'独立负责移动端 App 功能/兼容性测试，熟悉敏捷开发流程，缺陷发现率行业前10%。',
+   tags:['功能测试','移动端','敏捷']},
+  {type:'edu',  time:'2012 – 2016',     dot:'edu',    org:'北京信息科技大学',       role:'本科 · 计算机科学与技术',
+   achievement:'打下扎实的计算机基础，开始接触软件测试领域，参加校级编程竞赛获奖。',
+   tags:['本科','计算机基础']},
+];
+document.getElementById('expTimeline').innerHTML=expItems.map(e=>`
+<div class="tl-item">
+  <div class="tl-dot ${e.dot}"></div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+      <span style="font-family:var(--mono);font-size:12px;color:var(--muted)">${e.time}</span>
+      <span style="font-size:11px;padding:2px 8px;border-radius:999px;background:${e.type==='edu'?'var(--purple-lt)':'var(--accent-lt)'};color:${e.type==='edu'?'var(--purple)':'var(--accent)'};">${e.type==='edu'?'🎓 教育':'💼 工作'}</span>
+    </div>
+    <div style="font-weight:700;font-size:16px">${e.org}</div>
+    <div style="font-size:13px;font-weight:700;margin:4px 0 10px;background:linear-gradient(135deg,var(--a-500),var(--purple));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">${e.role}</div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:12px">${e.achievement}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">${e.tags.map(techBadge).join('')}</div>
+  </div>
+</div>`).join('');
+
+/* ── ABILITY MATRIX ── */
+const abilityGroups=[
+  {icon:'🧪',title:'测试管理',color:'var(--accent)',bg:'var(--accent-lt)',items:[
+    {name:'测试体系建设',level:95,label:'专家'},
+    {name:'团队管理',    level:90,label:'专家'},
+    {name:'质量度量',    level:85,label:'熟练'},
+    {name:'测试策略',    level:92,label:'专家'},
+  ]},
+  {icon:'🤖',title:'AI 测试',color:'var(--green)',bg:'var(--green-lt)',items:[
+    {name:'AI 用例生成',  level:88,label:'熟练'},
+    {name:'接口AI维护',   level:82,label:'熟练'},
+    {name:'报告智能生成', level:85,label:'熟练'},
+    {name:'Prompt 工程', level:80,label:'熟练'},
+  ]},
+  {icon:'⚙️',title:'自动化',color:'var(--purple)',bg:'var(--purple-lt)',items:[
+    {name:'Pytest / Python',level:90,label:'专家'},
+    {name:'Selenium/Appium',level:85,label:'熟练'},
+    {name:'接口自动化',    level:92,label:'专家'},
+    {name:'CI/CD 集成',   level:80,label:'熟练'},
+  ]},
+  {icon:'📊',title:'性能 & 安全',color:'var(--amber)',bg:'var(--amber-lt)',items:[
+    {name:'JMeter',      level:80,label:'熟练'},
+    {name:'性能调优分析', level:75,label:'掌握'},
+    {name:'安全测试基础', level:65,label:'了解'},
+  ]},
+];
+document.getElementById('abilityMatrix').innerHTML=abilityGroups.map(g=>`
+<div class="ability-group">
+  <div class="ability-group-title">
+    <div class="ability-group-title" style="background:${g.bg};color:${g.color};border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:0">${g.icon}</div>
+    <span style="color:${g.color}">${g.title}</span>
+  </div>
+  ${g.items.map(item=>`
+  <div class="ability-row">
+    <div class="ability-name">${item.name}</div>
+    <div class="ability-bar-wrap">
+      <div class="ability-bar">
+        <div class="ability-fill" style="width:${item.level}%;background:linear-gradient(90deg,${g.color},${g.color}88)"></div>
+      </div>
+      <div class="ability-level">${item.label}</div>
+    </div>
+  </div>`).join('')}
+</div>`).join('');
+
+function switchView(v){
+  document.getElementById('view-timeline').style.display = v==='timeline'?'block':'none';
+  document.getElementById('view-ability').style.display  = v==='ability' ?'block':'none';
+  document.getElementById('btn-timeline').classList.toggle('active', v==='timeline');
+  document.getElementById('btn-ability').classList.toggle('active',  v==='ability');
+}
+
+/* ── PROJECTS ── */
+const projects=[
+  {cat:'工作项目',tag:'work',name:'某大型电商平台测试体系建设',role:'测试主管',result:'覆盖率从30%→80%，发版周期缩短50%',
+   bg:'thumb-work',
+   star:{bg:'引入质量体系前，团队测试覆盖率低、发版失控，缺陷逃逸率高。',role:'主导整个测试团队转型，负责体系规划与推动落地。',solve:'建立用例分层体系 + 自动化金字塔 + AI辅助生成，推动全员参与质量度量。',result:'自动化覆盖率从30%到80%，缺陷逃逸率下降60%，发版周期缩短50%。'},
+   techs:['Pytest','Jenkins','AI测试','Python']},
+  {cat:'工作项目',tag:'work',name:'接口自动化框架重构',role:'高级测试工程师',result:'误报率降低40%，维护成本减半',
+   bg:'thumb-work',
+   star:{bg:'原有框架维护成本高，接口变更后用例大面积失效，误报率超30%。',role:'独立负责框架设计与重构，兼顾日常测试执行。',solve:'引入 AI 自动识别接口变更模块，重构数据驱动层，接入 CI 流水线。',result:'误报率从30%降至18%，用例维护时间减少50%，框架被全团队采用。'},
+   techs:['Python','FastAPI Mock','OpenAI API','Jenkins']},
+  {cat:'学术项目',tag:'academic',name:'研究生技术开发类竞赛项目',role:'项目负责人',result:'获奖（待填写具体奖项）',
+   bg:'thumb-academic',
+   star:{bg:'研究生期间参与XX类竞赛，需要在有限时间内完成技术方案设计与实现。',role:'担任项目负责人，负责整体方案设计与核心模块开发。',solve:'设计并实现了（待填写技术方案），解决了（待填写核心问题）。',result:'获得（待填写奖项），方案被（待填写评价）。'},
+   techs:['待填写']},
+  {cat:'学术项目',tag:'academic',name:'研究生学术研究项目',role:'主要研究员',result:'发表论文 / 参与课题',
+   bg:'thumb-academic',
+   star:{bg:'研究生阶段主要研究方向为软件质量与测试。',role:'参与导师课题研究，负责实验设计与论文撰写。',solve:'设计了（待填写方法），在（待填写数据集）上进行了验证。',result:'发表论文（待填写），研究成果应用于（待填写场景）。'},
+   techs:['待填写']},
+  {cat:'个人项目',tag:'personal',name:'测试平台演示站',role:'独立开发',result:'在线运行，集成 AI 能力',
+   bg:'thumb-personal',
+   star:{bg:'希望有一个可演示自研测试管理平台的在线站点，展示技术能力。',role:'独立完成需求、设计、开发、部署全流程。',solve:'基于 Vue3 + FastAPI 搭建，集成 AI 辅助用例生成模块，支持用例管理与报告导出。',result:'平台上线运行，已作为求职展示项目，获得面试官正面反馈。'},
+   techs:['Vue3','FastAPI','MySQL','Docker']},
+  {cat:'个人项目',tag:'personal',name:'个人技术博客站',role:'独立运营',result:'持续更新，月访问量 X+',
+   bg:'thumb-personal',
+   star:{bg:'希望建立个人技术影响力，输出测试领域原创内容。',role:'独立负责内容创作与技术运维。',solve:'基于 Next.js + MDX 搭建，优化 SEO，建立稳定的内容更新节奏。',result:'累计文章 X 篇，月均访问 X+，部分文章被转载。'},
+   techs:['Next.js','MDX','Vercel']},
+];
+
+let activeProjTag='all';
+function renderProjects(){
+  const list=activeProjTag==='all'?projects:projects.filter(p=>p.tag===activeProjTag);
+  document.getElementById('projectsGrid').innerHTML=list.map((p,i)=>`
+<div class="card" style="padding:0;overflow:hidden">
+  <div class="card-thumb ${p.bg}">
+    <span style="color:var(--muted);font-size:13px;z-index:1">封面截图占位</span>
+    <span class="pill" style="position:absolute;top:10px;left:10px;background:var(--accent-lt);color:var(--accent);border:1px solid var(--a-200)">${p.cat}</span>
+  </div>
+  <div class="card-body">
+    <div style="font-weight:700;font-size:16px;margin-bottom:4px">${p.name}</div>
+    <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:6px">角色：${p.role}</div>
+    <div style="font-size:13px;color:var(--green);font-weight:600;margin-bottom:10px">✓ ${p.result}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${p.techs.map(techBadge).join('')}</div>
+    <button class="btn btn-outline" style="font-size:13px;padding:7px 16px;width:100%;justify-content:center" onclick="toggleProject(${i},this)">查看 STAR 详情 ↓</button>
+    <div class="project-detail" id="proj-${i}">
+      <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
+        <div class="star-block"><div class="star-label">背景</div><div class="star-text">${p.star.bg}</div></div>
+        <div class="star-block"><div class="star-label">我的角色</div><div class="star-text">${p.star.role}</div></div>
+        <div class="star-block"><div class="star-label">解决方案</div><div class="star-text">${p.star.solve}</div></div>
+        <div class="star-block"><div class="star-label">最终结果</div><div class="star-text">${p.star.result}</div></div>
+      </div>
+    </div>
+  </div>
+</div>`).join('');
+}
+function toggleProject(i,btn){
+  const el=document.getElementById('proj-'+i);
+  const open=el.classList.toggle('open');
+  btn.textContent=open?'收起 ↑':'查看 STAR 详情 ↓';
+}
+const projTagMap={'all':'全部','work':'工作项目','academic':'学术项目','personal':'个人项目'};
+document.getElementById('projectTags').innerHTML=Object.entries(projTagMap).map(([k,v],i)=>`
+<button class="tag-filter${i===0?' active-tag':''}" onclick="activeProjTag='${k}';renderProjects();document.querySelectorAll('#projectTags .tag-filter').forEach(b=>b.classList.remove('active-tag'));this.classList.add('active-tag')">${v}</button>`).join('');
+renderProjects();
+
+/* ── AI SKILLS ── */
+const aiSkills=[
+  {icon:'🧪',title:'AI 生成用例 Skill',  tag:'测试效率',status:'已落地',statusBg:'var(--green-lt)',statusClr:'var(--green)',statusBdr:'oklch(82% .1 152)',
+   desc:'结合 LLM 大模型，根据需求文档自动生成测试用例，支持边界值、等价类、异常场景全覆盖，较人工提效 60%+。',
+   techs:['GPT-4o','Python','Pytest','Prompt Engineering']},
+  {icon:'🔧',title:'接口自动化维护 Skill',tag:'自动化',  status:'已落地',statusBg:'var(--green-lt)',statusClr:'var(--green)',statusBdr:'oklch(82% .1 152)',
+   desc:'AI 自动识别接口变更，智能修复断言与请求参数，大幅降低自动化用例维护成本，减少误报率 40%+。',
+   techs:['OpenAI API','Postman','Jenkins','Python']},
+  {icon:'📊',title:'测试报告生成 Skill', tag:'报告',    status:'已落地',statusBg:'var(--green-lt)',statusClr:'var(--green)',statusBdr:'oklch(82% .1 152)',
+   desc:'自动聚合测试数据，通过 AI 生成具有分析结论、风险提示、改进建议的专业测试报告，支持 PDF/HTML 导出。',
+   techs:['LangChain','Jinja2','WeasyPrint','Python']},
+  {icon:'🔍',title:'缺陷智能分析 Skill', tag:'质量',    status:'探索中',statusBg:'var(--amber-lt)',statusClr:'var(--amber)',statusBdr:'oklch(85% .1 82)',
+   desc:'通过 AI 对历史缺陷数据进行聚类分析，识别高频缺陷模式，为测试策略优化提供数据驱动的决策支持。',
+   techs:['OpenAI','Pandas','Sklearn','Streamlit']},
+];
+document.getElementById('aiGrid').innerHTML=aiSkills.map(s=>`
+<div class="card" style="padding:0;overflow:hidden">
+  <div class="card-thumb thumb-ai">
+    <span style="color:var(--muted);font-size:13px;z-index:1">Demo 截图 / 视频占位</span>
+    <span class="pill" style="position:absolute;top:10px;right:10px;background:${s.statusBg};color:${s.statusClr};border:1px solid ${s.statusBdr}">${s.status}</span>
+  </div>
+  <div class="card-body">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span style="font-size:26px">${s.icon}</span>
+      <div>
+        <div style="font-weight:700;font-size:15px">${s.title}</div>
+        <div style="font-size:12px;font-weight:700;background:linear-gradient(135deg,var(--a-500),var(--purple));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">${s.tag}</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.8">${s.desc}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">${s.techs.map(techBadge).join('')}</div>
+    <a href="#" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:var(--raised);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:13px;font-weight:700;text-decoration:none">⑂ GitHub</a>
+  </div>
+</div>`).join('');
+
+/* ── HONORS ── */
+const honors=[
+  {year:'2024',month:'08',cat:'work',  event:'年度优秀员工',         place:'年度荣誉',    desc:'在所在公司荣获年度优秀员工称号，表彰在 AI 辅助测试落地与团队建设方面的突出贡献。',location:'公司内部',hasImg:true},
+  {year:'2023',month:'11',cat:'work',  event:'季度最佳技术实践奖',   place:'季度荣誉',    desc:'主导自动化测试框架升级项目，显著提升测试效率，获公司季度技术创新奖。',              location:'公司内部',hasImg:true},
+  {year:'2023',month:'05',cat:'cert',  event:'ISTQB 高级测试分析师', place:'国际认证',    desc:'通过 ISTQB Advanced Level Test Analyst 国际认证考试，全球认可的测试专业资质。',   location:'线上',    hasImg:false},
+  {year:'2022',month:'09',cat:'school',event:'研究生技术开发类竞赛',  place:'一等奖（待填写）',desc:'参加XX类技术开发比赛，项目为（待填写），荣获（待填写奖项），全国/省级参赛队伍XX+。', location:'待填写',  hasImg:true},
+  {year:'2021',month:'06',cat:'school',event:'研究生学术竞赛',        place:'获奖（待填写）',  desc:'参加XX学术竞赛，完成（待填写成果），荣获（待填写奖项）。',                          location:'待填写',  hasImg:true},
+];
+const honorTagMap={'all':'全部','school':'在校荣誉','work':'工作荣誉','cert':'认证证书'};
+let activeHonorTag='all';
+function renderHonors(){
+  const list=activeHonorTag==='all'?honors:honors.filter(h=>h.cat===activeHonorTag);
+  document.getElementById('honorsTimeline').innerHTML=list.map(h=>`
+<div class="tl-item">
+  <div class="tl-dot ${h.cat==='school'?'edu':''}"></div>
+  <div class="card" style="display:grid;grid-template-columns:1fr ${h.hasImg?'180px':'0'};gap:20px;align-items:start">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--muted)">${h.year}.${h.month}</span>
+        <span class="chip">${h.place}</span>
+        <span style="font-size:11px;padding:2px 8px;border-radius:999px;background:${h.cat==='school'?'var(--purple-lt)':h.cat==='cert'?'var(--amber-lt)':'var(--green-lt)'};color:${h.cat==='school'?'var(--purple)':h.cat==='cert'?'var(--amber)':'var(--green)'}">${h.cat==='school'?'在校':h.cat==='cert'?'认证':'工作'}</span>
+        <span style="font-size:12px;color:var(--muted)">📍 ${h.location}</span>
+      </div>
+      <div style="font-weight:700;font-size:17px;margin-bottom:8px">${h.event}</div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.8">${h.desc}</p>
+    </div>
+    ${h.hasImg?`<div style="width:180px;height:130px;background:var(--raised);border:1px solid var(--border);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;text-align:center;line-height:1.8">奖杯/证书<br>照片占位</div>`:''}
+  </div>
+</div>`).join('');
+}
+document.getElementById('honorTags').innerHTML=Object.entries(honorTagMap).map(([k,v],i)=>`
+<button class="tag-filter${i===0?' active-tag':''}" onclick="activeHonorTag='${k}';renderHonors();document.querySelectorAll('#honorTags .tag-filter').forEach(b=>b.classList.remove('active-tag'));this.classList.add('active-tag')">${v}</button>`).join('');
+renderHonors();
+
+/* ── BLOG ── */
+const blogPosts=[
+  {title:'如何用 GPT-4o 自动生成高质量测试用例',tags:['AI测试','效率'],  date:'2024-09-12',summary:'从 Prompt 设计到用例质量评估，完整介绍在真实项目中落地 AI 生成用例的全流程实践。',readMin:8},
+  {title:'接口自动化框架设计：从0到1的架构思路', tags:['自动化','架构'],  date:'2024-07-20',summary:'分享一套经过生产验证的接口自动化框架设计方案，涵盖分层设计、数据驱动、CI集成。',  readMin:12},
+  {title:'测试团队管理的10个关键经验',           tags:['团队管理'],       date:'2024-05-15',summary:'10年测试管理经验总结，从招聘、培养、绩效到工程文化，分享可落地的实操方法。',     readMin:10},
+  {title:'AI 测试报告生成：LangChain + Jinja2', tags:['AI测试','报告'],  date:'2024-03-08',summary:'用 LangChain 构建智能报告生成 Pipeline，自动输出带有分析结论的专业测试报告。',  readMin:9},
+  {title:'性能测试避坑指南：我踩过的那些坑',      tags:['性能测试'],       date:'2024-01-22',summary:'结合多个真实案例，总结性能测试中场景设计、监控指标、结果分析的常见误区与正确做法。',readMin:11},
+  {title:'从测试工程师到测试主管的成长路径',      tags:['职业发展'],       date:'2023-11-30',summary:'个人职业转型经历与思考，分享技术深度与管理广度如何兼顾，适合3-5年测试同学。',  readMin:7},
+];
+const allBlogTags=[...new Set(blogPosts.flatMap(p=>p.tags))];
+let activeTag='all';
+function renderBlog(){
+  const list=activeTag==='all'?blogPosts:blogPosts.filter(p=>p.tags.includes(activeTag));
+  document.getElementById('blogGrid').innerHTML=list.map((p,i)=>`
+<div class="card" style="cursor:pointer" onclick="openArticle(${blogPosts.indexOf(p)})">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${p.tags.map(t=>`<span class="chip">${t}</span>`).join('')}</div>
+    <span style="font-size:12px;color:var(--muted);white-space:nowrap;margin-left:8px">${p.readMin} 分钟</span>
+  </div>
+  <div style="font-weight:700;font-size:16px;margin-bottom:8px;line-height:1.4">${p.title}</div>
+  <p style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:14px">${p.summary}</p>
+  <div style="font-size:12px;color:var(--muted);font-family:var(--mono)">${p.date}</div>
+</div>`).join('');
+}
+document.getElementById('blogTags').innerHTML=['all',...allBlogTags].map((t,i)=>`
+<button class="tag-filter${i===0?' active-tag':''}" onclick="activeTag='${t}';renderBlog();document.querySelectorAll('#blogTags .tag-filter').forEach(b=>b.classList.remove('active-tag'));this.classList.add('active-tag')">
+  ${t==='all'?'全部':t}
+</button>`).join('');
+renderBlog();
+
+const blogArticleContent = {
+  0: {
+    sections:[
+      {id:'s1',level:2,title:'为什么要用 AI 生成用例？'},
+      {id:'s2',level:2,title:'Prompt 设计策略'},
+      {id:'s3',level:3,title:'结构化提示词模板'},
+      {id:'s4',level:2,title:'质量评估方法'},
+      {id:'s5',level:2,title:'落地实践总结'},
+    ],
+    body:`
+<h2 id="s1">为什么要用 AI 生成用例？</h2>
+<p>在真实项目中，测试用例的编写往往占据测试工程师 30%-40% 的时间。需求文档质量参差不齐，边界场景容易被遗漏，而 AI 在全量覆盖这方面有天然优势。</p>
+<div class="article-callout">本文基于我在某电商平台落地 AI 生成用例的真实经历，覆盖 Prompt 设计→质量评估→流程接入三个阶段，适合有一定测试基础的同学参考。</div>
+<h2 id="s2">Prompt 设计策略</h2>
+<p>直接把需求丢给大模型效果很差。关键在于结构化提示词，让模型理解测试意图而不只是复述需求。</p>
+<p>我总结了三条核心原则：</p>
+<ul>
+  <li><strong>角色绑定</strong>：要求模型以"资深测试工程师"身份输出，而非默认的"内容助理"</li>
+  <li><strong>维度拆解</strong>：明确列出功能/边界/异常/性能等维度，避免模型偏向正向路径</li>
+  <li><strong>格式约束</strong>：规定输出 JSON 或 Markdown 表格，方便直接导入测试平台</li>
+</ul>
+<h3 id="s3">结构化提示词模板</h3>
+<p>以下是我在实际项目中使用的模板，经过多轮迭代验证：</p>
+<pre><code>你是一名资深测试工程师，精通等价类、边界值分析和 PICT 组合测试方法。
+根据以下需求，生成测试用例，要求：
+1. 覆盖正常流程、边界值、异常场景
+2. 每条用例包含：用例ID / 前置条件 / 操作步骤 / 预期结果
+3. 输出为 Markdown 表格格式
+
+需求描述：
+{需求内容}</code></pre>
+<h2 id="s4">质量评估方法</h2>
+<p>AI 生成的用例不能盲目信任。我建立了三层质量评估机制：</p>
+<ol>
+  <li><strong>覆盖率扫描</strong>：与需求矩阵对照，确认所有功能点都有对应用例</li>
+  <li><strong>人工抽检</strong>：每批抽查 20%，重点检查边界值和异常场景的准确性</li>
+  <li><strong>执行反馈闭环</strong>：记录 AI 用例在执行中发现的缺陷数，持续调优 Prompt</li>
+</ol>
+<div class="article-callout warn">⚠️ 注意：AI 对"隐式业务规则"的理解较弱，例如"VIP 用户享受不同逻辑"等场景务必人工补充。</div>
+<h2 id="s5">落地实践总结</h2>
+<p>经过三个迭代周期的实践，我们团队的用例编写效率提升了约 60%，同时首轮评审通过率从 72% 提升到 88%。</p>
+<p>AI 生成用例不是替代测试工程师，而是把工程师从重复劳动中解放出来，专注于更有价值的测试设计和风险判断。这才是 AI 辅助测试的正确打开方式。</p>
+`
+  },
+  1: {
+    sections:[
+      {id:'s1',level:2,title:'框架设计的核心矛盾'},
+      {id:'s2',level:2,title:'分层架构设计'},
+      {id:'s3',level:2,title:'数据驱动层实现'},
+      {id:'s4',level:2,title:'CI 流水线接入'},
+    ],
+    body:`
+<h2 id="s1">框架设计的核心矛盾</h2>
+<p>接口自动化框架最常见的问题是：随着接口数量增长，维护成本呈指数级上升。一次后端重构，可能导致数百条用例同时失效。</p>
+<p>解决这个问题的核心是<strong>把不稳定的部分隔离出来</strong>，让框架只依赖稳定的抽象层。</p>
+<h2 id="s2">分层架构设计</h2>
+<p>经过多个项目的实践，我沉淀出一套三层架构：</p>
+<ul>
+  <li><strong>接口层</strong>：只定义请求结构，不包含任何断言逻辑</li>
+  <li><strong>业务层</strong>：组合接口调用，实现业务场景</li>
+  <li><strong>用例层</strong>：纯数据驱动，包含测试数据和预期结果</li>
+</ul>
+<h2 id="s3">数据驱动层实现</h2>
+<p>数据驱动的精髓是：用例代码零改动，只更新数据文件。我们使用 YAML 存储测试数据，通过参数化注入到用例中。</p>
+<pre><code>// pytest 参数化示例
+@pytest.mark.parametrize("case", load_cases("order_create.yaml"))
+def test_order_create(case):
+    resp = api.order.create(**case["input"])
+    assert_response(resp, case["expect"])</code></pre>
+<h2 id="s4">CI 流水线接入</h2>
+<p>框架本身跑通后，接入 Jenkins 流水线才能发挥最大价值。我们配置了三道门禁：提交触发冒烟测试、PR 合并触发全量回归、每日定时触发性能基线检测。</p>
+`
+  },
+};
+
+/* 默认补全其余文章用同一结构 */
+for(let i=2;i<blogPosts.length;i++){
+  if(!blogArticleContent[i]){
+    blogArticleContent[i]={
+      sections:[{id:'s1',level:2,title:'背景与动机'},{id:'s2',level:2,title:'核心内容'},{id:'s3',level:2,title:'总结与反思'}],
+      body:`<h2 id="s1">背景与动机</h2><p>${blogPosts[i].summary}</p><div class="article-callout">本文为占位内容，后续将补充完整正文。</div><h2 id="s2">核心内容</h2><p>（正文待补充）</p><h2 id="s3">总结与反思</h2><p>（待补充）</p>`
+    };
+  }
+}
+
+function updateReadingBar(){
+  const art = document.getElementById('articleContent');
+  if(!art) return;
+  const total = art.offsetHeight;
+  const scrolled = window.scrollY + window.innerHeight - art.offsetTop;
+  const pct = Math.min(100, Math.max(0, (scrolled / total)*100));
+  document.getElementById('readingBar').style.width = pct+'%';
+}
+
+function updateTocActive(){
+  const items = document.querySelectorAll('#articleContent h2, #articleContent h3');
+  let current = '';
+  items.forEach(el=>{
+    if(el.getBoundingClientRect().top <= 100) current = el.id;
+  });
+  document.querySelectorAll('.toc-item').forEach(li=>{
+    li.classList.toggle('toc-active', li.dataset.id === current);
+  });
+}
+
+function openArticle(idx){
+  const post = blogPosts[idx];
+  const data = blogArticleContent[idx];
+
+  // Build TOC
+  const tocHtml = data.sections.map(s=>`
+<li class="toc-item ${s.level===3?'toc-h3':''}" data-id="${s.id}" onclick="document.getElementById('${s.id}').scrollIntoView({behavior:'smooth'})">${s.title}</li>`).join('');
+  document.getElementById('tocList').innerHTML = tocHtml;
+
+  // Build article
+  document.getElementById('articleContent').innerHTML = `
+<div class="article-chips">${post.tags.map(t=>`<span class="chip">${t}</span>`).join('')}</div>
+<h1 class="article-title">${post.title}</h1>
+<div class="article-meta">
+  <span class="article-date">${post.date}</span>
+  <span>·</span>
+  <span>${post.readMin} 分钟阅读</span>
+</div>
+<div class="article-body">${data.body}</div>
+<div class="related-wrap">
+  <div class="related-title">相关文章</div>
+  <div class="related-grid">${blogPosts.filter((_,i)=>i!==idx).slice(0,3).map((p,i)=>`
+<div class="card" style="cursor:pointer;padding:18px" onclick="openArticle(${blogPosts.indexOf(p)})">
+  <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">${p.tags.map(t=>`<span class="chip">${t}</span>`).join('')}</div>
+  <div style="font-weight:700;font-size:14px;line-height:1.45;margin-bottom:6px">${p.title}</div>
+  <div style="font-size:12px;color:var(--muted)">${p.readMin} 分钟 · ${p.date}</div>
+</div>`).join('')}
+  </div>
+</div>`;
+
+  showPage('blog-detail');
+  window.addEventListener('scroll', updateTocActive, {passive:true});
+}
+
+renderBlog();
+</script>
+</body>
+</html>

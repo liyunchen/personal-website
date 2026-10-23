@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>方案 A — Refined 克制精炼</title>
+<style>
+:root{
+  --n-50:oklch(98.5% 0.003 250);--n-100:oklch(96% 0.005 250);--n-200:oklch(91% 0.007 250);
+  --n-300:oklch(83% 0.009 250);--n-500:oklch(53% 0.010 250);--n-700:oklch(35% 0.010 250);--n-900:oklch(16% 0.010 250);
+  --a-100:oklch(94% 0.06 240);--a-200:oklch(88% 0.09 240);--a-400:oklch(64% 0.16 240);--a-500:oklch(52% 0.18 240);
+  --green:oklch(53% 0.16 152);--green-lt:oklch(95% 0.06 152);
+  --purple:oklch(58% 0.17 300);--amber:oklch(62% 0.17 82);--amber-lt:oklch(96% 0.07 82);
+  --bg:var(--n-50);--surface:oklch(100% 0 0);--raised:var(--n-100);--border:var(--n-200);
+  --text:var(--n-900);--muted:var(--n-500);--accent:var(--a-500);--accent-lt:var(--a-100);
+  --sh-sm:0 1px 4px oklch(16% .01 250/.08),0 2px 6px oklch(16% .01 250/.05);
+  --sh-md:0 4px 14px oklch(16% .01 250/.10),0 2px 4px oklch(16% .01 250/.06);
+  --font:'PingFang SC','Microsoft YaHei',sans-serif;--mono:'JetBrains Mono','Fira Code',monospace;
+  --r:6px;--r-md:10px;--r-lg:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.75}
+
+/* ── A方案标志特性：导航底线激活态 ── */
+.nav{background:oklch(100% 0 0/.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);
+  height:52px;display:flex;align-items:center;padding:0 32px;justify-content:space-between;
+  box-shadow:0 1px 2px oklch(16% .01 250/.06)}
+.nav-logo{font-weight:800;font-size:17px;color:var(--text)}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:2px}
+.nav-link{padding:5px 13px;border-radius:var(--r);font-size:14px;color:var(--muted);cursor:pointer;
+  font-weight:500;border:none;background:transparent;font-family:var(--font);
+  position:relative;transition:color .14s}
+/* A方案：底部细线指示激活，无背景色 */
+.nav-link::after{content:'';position:absolute;bottom:-1px;left:50%;right:50%;height:2px;
+  background:var(--accent);border-radius:1px;transition:left .18s ease,right .18s ease}
+.nav-link.active{color:var(--accent)}
+.nav-link.active::after,.nav-link:hover::after{left:10%;right:10%}
+.nav-link:hover{color:var(--text)}
+
+.demo-body{max-width:960px;margin:0 auto;padding:40px 24px}
+.label{display:inline-block;background:var(--accent-lt);color:var(--accent);font-size:11px;
+  font-weight:700;padding:4px 12px;border-radius:999px;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
+h2{font-size:22px;font-weight:800;margin-bottom:8px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:32px}
+
+/* ── A方案：卡片悬停为左侧彩条滑入，无transform ── */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:22px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;cursor:pointer;
+  transition:border-color .18s,box-shadow .18s}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;
+  background:linear-gradient(to bottom,var(--accent),var(--purple));
+  transition:width .2s ease;border-radius:var(--r-lg) 0 0 var(--r-lg)}
+.card:hover{border-color:var(--a-400);box-shadow:var(--sh-md)}
+.card:hover::before{width:3px}
+.card-title{font-weight:700;font-size:15px;margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--muted);line-height:1.7}
+
+/* ── A方案：按钮 active 下压态 ── */
+.btns{display:flex;gap:12px;margin-bottom:40px}
+.btn{padding:10px 22px;border-radius:var(--r-md);font-size:14px;font-weight:600;cursor:pointer;
+  border:none;font-family:var(--font);transition:all .15s}
+.btn-primary{background:linear-gradient(135deg,var(--a-500),var(--purple));color:#fff;
+  box-shadow:0 2px 10px oklch(52% .18 240/.30)}
+.btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px);
+  box-shadow:0 4px 16px oklch(52% .18 240/.38)}
+.btn-primary:active{transform:translateY(1px);box-shadow:0 1px 6px oklch(52% .18 240/.20)}
+.btn-outline{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
+.btn-outline:active{transform:translateY(1px);background:var(--a-100)}
+
+/* ── A方案：chips hover 轻微放大 ── */
+.chips{display:flex;gap:8px;margin-bottom:40px;flex-wrap:wrap}
+.chip{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;
+  background:var(--accent-lt);color:var(--accent);border:1px solid var(--a-200);
+  cursor:pointer;transition:transform .14s,box-shadow .14s}
+.chip:hover{transform:scale(1.05);box-shadow:0 2px 8px oklch(52% .18 240/.18)}
+
+/* ── A方案：数字条 counter 动画 ── */
+.stats{display:flex;border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;background:var(--surface);box-shadow:var(--sh-sm);margin-bottom:40px}
+.stat{flex:1;padding:22px 16px;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-num{font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--a-500),var(--purple));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1.1;animation:countUp .8s ease forwards}
+@keyframes countUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.stat-label{font-size:12px;color:var(--muted);margin-top:5px}
+
+/* ── A方案：section eyebrow 左侧短横线 ── */
+.eyebrow{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;
+  color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.eyebrow::before{content:'';width:16px;height:2px;background:var(--accent);border-radius:1px;flex-shrink:0}
+
+/* 页面入场动画 */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.demo-body>*{animation:fadeUp .4s ease both}
+.demo-body>*:nth-child(2){animation-delay:.05s}
+.demo-body>*:nth-child(3){animation-delay:.1s}
+.demo-body>*:nth-child(4){animation-delay:.15s}
+.demo-body>*:nth-child(5){animation-delay:.2s}
+.demo-body>*:nth-child(6){animation-delay:.25s}
+
+.note{background:var(--raised);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:16px 20px;font-size:13px;color:var(--muted);line-height:1.7}
+.note strong{color:var(--text)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">LI<span>.</span>YC</div>
+  <div class="nav-links">
+    <button class="nav-link active">首页</button>
+    <button class="nav-link">经历</button>
+    <button class="nav-link">项目</button>
+    <button class="nav-link">AI 技能</button>
+    <button class="nav-link">荣誉墙</button>
+    <button class="nav-link">博客</button>
+  </div>
+</nav>
+
+<div class="demo-body" style="margin-top:52px">
+  <div class="label">方案 A — Refined 克制精炼</div>
+
+  <div class="eyebrow">Overview</div>
+  <h2>设计理念</h2>
+  <p class="sub">简洁、专业、沉稳。动效克制，每一个交互都有意义但不喧宾夺主。</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-title">🧪 测试专家</div>
+      <div class="card-desc">悬停时左侧彩条滑入，无位移，保持布局稳定</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🤖 AI 测试先行</div>
+      <div class="card-desc">边框色加深，阴影提升，感受精准而不夸张</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏆 多项荣誉</div>
+      <div class="card-desc">整体基调沉稳，适合面向 HR 和专业面试官</div>
+    </div>
+  </div>
+
+  <div class="btns">
+    <button class="btn btn-primary">查看经历 →</button>
+    <button class="btn btn-outline">联系我</button>
+  </div>
+
+  <div class="chips">
+    <span class="chip">AI测试</span>
+    <span class="chip">自动化</span>
+    <span class="chip">测试管理</span>
+    <span class="chip">Python</span>
+    <span class="chip">Jenkins</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">10+</div><div class="stat-label">年测试经验</div></div>
+    <div class="stat"><div class="stat-num">30+</div><div class="stat-label">交付项目</div></div>
+    <div class="stat"><div class="stat-num">80%</div><div class="stat-label">自动化覆盖率</div></div>
+    <div class="stat"><div class="stat-num">60%</div><div class="stat-label">AI提效幅度</div></div>
+  </div>
+
+  <div class="note">
+    <strong>方案 A 特征汇总：</strong>
+    导航激活用底部细线（非背景色）·
+    卡片悬停彩条从左侧滑入，无位移 ·
+    按钮有 active 下压 1px 反馈 ·
+    chip 悬停 scale(1.05) ·
+    数字条入场淡入上移动画 ·
+    section eyebrow 加左侧短横线装饰 ·
+    正文行高 1.75（当前 1.65）
+  </div>
+</div>
+</body>
+</html>
