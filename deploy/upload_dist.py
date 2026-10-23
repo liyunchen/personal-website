@@ -8,7 +8,8 @@ import posixpath
 import ssh_helper as H
 
 LOCAL_DIST = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "portfolio", "dist")
-REMOTE_DIST = "/www/wwwroot/your-project/dist"
+REMOTE_DIST = os.environ.get(
+    "REMOTE_DIST", "/www/wwwroot/your-project/dist")
 
 
 def walk(local_dir, remote_dir, client, results):

@@ -3,6 +3,8 @@
 > 面向互联网企业 HR / 面试官的在线简历与作品展示站，内置内容管理后台。
 > 前端 React + TypeScript，后端 Python 标准库，Nginx 静态托管 + 反向代理。
 
+一个可直接复用的「在线简历 + 作品集」全栈方案：所有内容都能通过后台自助维护，**不需要改代码、不需要重新部署**。
+
 ---
 
 ## 目录
@@ -18,6 +20,8 @@
 - [安全设计](#安全设计)
 - [常见问题](#常见问题)
 - [运维手册](#运维手册)
+- [二次开发](#二次开发)
+- [开源说明](#开源说明)
 
 ---
 
@@ -420,3 +424,81 @@ python ssh_helper.py run "certbot renew"               # 实际续期
 ```
 
 certbot 已安装定时任务，正常情况无需手动干预。
+---
+
+## 二次开发
+
+### 改默认内容
+
+`portfolio/src/data/defaultContent.ts` 是唯一的默认数据源，也是 API 不可用时的降级内容。修改它等于修改站点初始内容。
+
+其中的占位信息需替换为你自己的：
+
+```ts
+// 联系方式
+value: 'your-name@example.com'          → 你的邮箱
+value: 'github.com/your-handle'         → 你的 GitHub
+value: '138-XXXX-XXXX'                  → 你的手机号
+
+// 基本信息
+profile.name / headline / roles / intro  → 你的个人信息
+```
+
+### 加一个新分区
+
+1. 在 `portfolio/src/types/content.ts` 里加分区类型
+2. 在 `defaultContent.ts` 里加对应的空数组
+3. 在 `lib/api.ts` 的 `mergeWithDefaults()` 里加补齐逻辑
+4. 在 `admin/Admin.tsx` 的侧栏与 `listOps` 里注册
+5. 在 `admin/Fields.tsx` 里加对应表单渲染
+
+### 换配色
+
+`portfolio/src/styles/globals.css` 顶部的 CSS 变量即全部设计 token：
+
+```css
+:root {
+  --accent: oklch(...);   /* 主色 */
+  --green:  oklch(...);
+  --purple: oklch(...);
+  /* ... */
+}
+```
+
+### 换后端语言/框架
+
+`deploy/server/app.py` 是一个**零依赖的完整参考实现**。它的接口契约很简单，全部照搬即可：
+
+```
+GET  /api/health          健康检查
+GET  /api/content         读取内容（公开）
+GET  /api/verify          校验 token
+POST /api/login           登录，返回 token
+PUT  /api/content         保存内容（需 token）
+POST /api/upload          上传图片（需 token）
+```
+
+---
+
+## 开源说明
+
+### 示例内容与真实内容
+
+本仓库的默认内容（公司名、履历、荣誉、项目）**均为示例占位内容**，仅用于演示数据结构与页面效果，不构成任何真实履历。使用时请在后台替换为你自己的真实信息。
+
+姓名、公司名、学校名等出现在源码中属于**示例数据**，不影响安全性；真正需要注意的凭据类信息（密码、Token、服务器 IP、真实域名）已全部从仓库中移除。
+
+### 安全提示
+
+- 本项目采用**单密码 + 会话保持**的简化鉴权，适合个人展示站这类低并发场景
+- 若用于多人协作或后台有重要数据，请补充：多用户体系、登录失败锁定、操作审计、二次验证
+- 所有凭据必须通过环境变量注入，不要写进代码或提交进仓库
+- 部署前请务必在服务器上生成 `.env` 并设置 `chmod 600`
+
+### 致谢
+
+- [React](https://react.dev/) · [Vite](https://vite.dev/) · [TypeScript](https://www.typescriptlang.org/)
+- [Playwright](https://playwright.dev/) —— 端到端测试
+- [Let's Encrypt](https://letsencrypt.org/) —— 免费证书
+
+如果这个项目帮到你，欢迎给个 Star 作为鼓励。
