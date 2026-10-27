@@ -5,7 +5,11 @@ After=network.target
 
 [Service]
 Type=simple
-User=root
+# 以 www 运行（不要用 root）。前提：data/ 与 uploads/ 目录及其内文件的属主
+# 必须是 www:www，否则保存内容、上传图片都会因权限不足失败。
+# 换用户后执行：chown -R www:www <API_BASE_DIR>/data <API_BASE_DIR>/uploads
+User=www
+Group=www
 WorkingDirectory=/www/wwwroot/your-project/api
 Environment="API_HOST=127.0.0.1"
 Environment="API_PORT=8101"
