@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { uploadImage } from '../lib/api'
 
 /* ───────────���─────── 基础字段 ────────────────────── */
@@ -132,6 +132,12 @@ export function ImageField({
   const inputRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
+  const [broken, setBroken] = useState(false)
+
+  // 换图后重新给新地址一次加载机会
+  useEffect(() => {
+    setBroken(false)
+  }, [value])
 
   async function pick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -155,7 +161,14 @@ export function ImageField({
       <div className="img-field">
         {value ? (
           <div className="img-preview">
-            <img src={value} alt="预览" />
+            {broken ? (
+              <div className="img-broken">
+                <span>图片无法加载</span>
+                <span className="img-broken-hint">地址失效或文件已丢失，请重新上传</span>
+              </div>
+            ) : (
+              <img src={value} alt="预览" onError={() => setBroken(true)} />
+            )}
             <div className="img-preview-actions">
               <button type="button" className="btn btn-mini" onClick={() => inputRef.current?.click()}>
                 更换

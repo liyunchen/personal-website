@@ -29,7 +29,14 @@ export default function Blog({
             >
               <div className="card-thumb thumb-blog">
                 {p.cover ? (
-                  <img src={p.cover} alt={p.title} className="thumb-img" />
+                  <img
+                    src={p.cover}
+                    alt={p.title}
+                    className="thumb-img"
+                    onError={e => {
+                      e.currentTarget.style.visibility = 'hidden'
+                    }}
+                  />
                 ) : (
                   <span style={{ color: 'var(--muted)', fontSize: 13 }}>封面图占位</span>
                 )}

@@ -53,7 +53,14 @@ export default function Projects({ projects }: { projects: ProjectItem[] }) {
               <div className="card" style={{ padding: 0, overflow: 'hidden' }} key={p.id}>
                 <div className={`card-thumb ${CAT_THUMB[p.category] ?? 'thumb-work'}`}>
                   {p.cover ? (
-                    <img src={p.cover} alt={p.name} className="thumb-img" />
+                    <img
+                      src={p.cover}
+                      alt={p.name}
+                      className="thumb-img"
+                      onError={e => {
+                        e.currentTarget.style.visibility = 'hidden'
+                      }}
+                    />
                   ) : (
                     <span style={{ color: 'var(--muted)', fontSize: 13 }}>Demo 截图占位</span>
                   )}

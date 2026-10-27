@@ -26,7 +26,14 @@ export default function AISkills({ skills }: { skills: AiSkillItem[] }) {
               <div className="card" style={{ padding: 0, overflow: 'hidden' }} key={s.id}>
                 <div className="card-thumb thumb-ai" style={{ position: 'relative' }}>
                   {s.cover ? (
-                    <img src={s.cover} alt={s.title} className="thumb-img" />
+                    <img
+                      src={s.cover}
+                      alt={s.title}
+                      className="thumb-img"
+                      onError={e => {
+                        e.currentTarget.style.visibility = 'hidden'
+                      }}
+                    />
                   ) : (
                     <span style={{ color: 'var(--muted)', fontSize: 13 }}>Demo 截图 / 视频占位</span>
                   )}

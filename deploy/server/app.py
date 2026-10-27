@@ -208,7 +208,9 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = urlparse(self.path).path.rstrip("/") or "/"
 
-        if path == "/api/health":
+        if path.startswith("/uploads/"):
+            self.serve_upload(path)
+        elif path == "/api/health":
             self.json_response(200, {"ok": True, "ts": int(time.time())})
         elif path in ("/api/content", "/api"):
             self.json_response(200, read_json(CONTENT_FILE, {}))
@@ -358,6 +360,45 @@ class Handler(BaseHTTPRequestHandler):
 
         url = f"/uploads/{fname}"
         self.json_response(200, {"ok": True, "url": url, "size": len(payload)})
+
+    def serve_upload(self, path: str, head_only: bool = False):
+        """把 uploads 目录下的图片直接返回给浏览器。
+
+        只接受「/uploads/<单层文件名>」且扩展名在白名单内：
+        任何带路径分隔符、以点开头的名字一律 404，杜绝 ../ 穿越。
+        """
+        rel = path[len("/uploads/"):]
+        if not rel or "/" in rel or "\\" in rel or rel.startswith("."):
+            return self.error(404, "文件不存在")
+        ext = os.path.splitext(rel)[1].lower()
+        if ext not in ALLOWED_IMAGE_EXT:
+            return self.error(404, "文件不存在")
+
+        try:
+            with open(os.path.join(UPLOAD_DIR, rel), "rb") as f:
+                body = f.read()
+        except OSError:
+            return self.error(404, "文件不存在")
+
+        self.send_response(200)
+        self.send_header("Content-Type", CONTENT_TYPES.get(ext, "application/octet-stream"))
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("X-Content-Type-Options", "nosniff")
+        # 文件名由服务端 uuid 生成，内容不会变，可长缓存
+        self.send_header("Cache-Control", "public, max-age=2592000")
+        self.end_headers()
+        if not head_only:
+            try:
+                self.wfile.write(body)
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+
+    def do_HEAD(self):
+        path = urlparse(self.path).path.rstrip("/") or "/"
+        if path.startswith("/uploads/"):
+            self.serve_upload(path, head_only=True)
+        else:
+            self.error(404, "接口不存在")
 
     def do_OPTIONS(self):
         self.send_response(204)
